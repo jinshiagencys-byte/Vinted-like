@@ -1,0 +1,29 @@
+{
+  "name": "secondevie",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "pnpm --filter @secondevie/api build",
+    "test": "pnpm --filter @secondevie/api test",
+    "test:integration": "pnpm --filter @secondevie/api test:integration",
+    "lint": "pnpm --filter @secondevie/api lint",
+    "typecheck": "pnpm --filter @secondevie/api typecheck",
+    "prisma:generate": "pnpm --filter @secondevie/api prisma:generate",
+    "outbox:publier": "pnpm --filter @secondevie/api outbox:publier",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.0"
+  }
+}

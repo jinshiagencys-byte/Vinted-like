@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Événements de domaine écrits dans la transaction métier (outbox).
+model OutboxEvenement {
+  id             String    @id @db.Uuid
+  type           String    @db.VarChar(80)
+  version        Int       @default(1)
+  agregatType    String    @map("agregat_type") @db.VarChar(40)
+  agregatId      String    @map("agregat_id") @db.Uuid
+  payload        Json
+  traceId        String?   @map("trace_id") @db.VarChar(32)
+  creeLe         DateTime  @default(now()) @map("cree_le") @db.Timestamptz(3)
+  publieLe       DateTime? @map("publie_le") @db.Timestamptz(3)
+  tentatives     Int       @default(0)
+  derniereErreur String?   @map("derniere_erreur") @db.Text
+
+  @@index([publieLe, creeLe])
+  @@map("outbox_evenements")
+}
+
+/// Consommateurs déjà traités, pour l'idempotence au moins une fois.
+model InboxEvenement {
+  evenementId  String   @map("evenement_id") @db.Uuid
+  consommateur String   @map("consommateur") @db.VarChar(80)
+  traiteLe     DateTime @map("traite_le") @db.Timestamptz(3)
+
+  @@id([evenementId, consommateur])
+  @@map("inbox_evenements")
+}

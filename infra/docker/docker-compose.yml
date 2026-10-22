@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: secondevie-postgres
+    environment:
+      POSTGRES_USER: secondevie
+      POSTGRES_PASSWORD: secondevie
+      POSTGRES_DB: secondevie
+    ports:
+      - '5432:5432'
+    volumes:
+      - secondevie-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U secondevie -d secondevie']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: secondevie-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - secondevie-redis:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: secondevie-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: secondevie
+      MINIO_ROOT_PASSWORD: secondevie-secret
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - secondevie-minio:/data
+
+volumes:
+  secondevie-postgres:
+  secondevie-redis:
+  secondevie-minio:
