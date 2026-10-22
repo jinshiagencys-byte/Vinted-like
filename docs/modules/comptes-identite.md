@@ -678,8 +678,9 @@ d’intégration aux étapes 1–3.
 |---|---|---|
 | **[nom à compléter]** | 22/10/2026 | ☑ acceptée ☐ corrections demandées |
 
-> **Suite immédiate** : le **lot 0** (socle) a démarré le 22/10/2026. L’étape 1 du module
-> M1 reste bloquée jusqu’à ce que le socle soit disponible, exécuté et validé.
+> **Suite immédiate** : le **lot 0** (socle) a été validé le 22/10/2026 par la CI GitHub
+> (migration PostgreSQL 16, tests Testcontainers, typecheck, lint et build verts). L’étape 1
+> du module M1 peut démarrer.
 
 ---
 

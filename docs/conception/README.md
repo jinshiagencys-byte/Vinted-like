@@ -21,9 +21,9 @@ règles métier, événements, tests et lots d'implémentation.
 
 > **Plan d’exécution de M1** : le document opérationnel au format du guide étudiant est
 > [`docs/modules/comptes-identite.md`](../modules/comptes-identite.md). Son cadrage a été
-> validé le 22/10/2026 ; le **lot 0** (socle) est démarré. L’étape 1 ne commence qu’après
-> validation du lot 0. Les documents de ce dossier restent des annexes de conception
-> détaillée.
+> validé le 22/10/2026 ; le **lot 0** (socle) est validé depuis le 22/10/2026 par la CI
+> GitHub. L’étape 1 peut démarrer. Les documents de ce dossier restent des annexes de
+> conception détaillée.
 
 ## Ordre de conception proposé
 

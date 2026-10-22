@@ -48,11 +48,11 @@ docs/                     architecture, conception, ADR
 
 - [x] monorepo pnpm, API NestJS, packages partagés
 - [x] configuration Zod, filtre d’erreurs, `traceId`
-- [x] Prisma, migration outbox/inbox, seed de base (migration non appliquée ici : Docker absent)
+- [x] Prisma, migration outbox/inbox, seed de base (migration appliquée en CI sur PostgreSQL 16)
 - [x] Redis et BullMQ
 - [x] outbox/inbox, publisher BullMQ et consommation idempotente
 - [x] guards `JwtAuthGuard`, `RolesGuard`, `ProprietaireGuard`
-- [x] harnais Testcontainers (PostgreSQL, Redis) — à exécuter avec Docker
+- [x] harnais Testcontainers (PostgreSQL, Redis) — validé en CI
 - [ ] alerte dead-letter outbox (les événements à 5 échecs restent en attente)
 - [ ] client S3/MinIO (utile à l’étape 3 de M1)
 - [ ] OpenAPI et client typé (étape 2 de M1)
@@ -60,9 +60,10 @@ docs/                     architecture, conception, ADR
 ## Limites de l’environnement de développement
 
 - Node 24 est installé localement ; la cible reste Node 22, également utilisée en CI.
-- Docker n’est pas installé sur cette machine : les tests unitaires et le build passent,
-  mais les tests Testcontainers sont ignorés et la migration n’a pas été appliquée.
-- Il faudra lancer PostgreSQL 16 et Redis 7 avant l’étape 1 de M1.
+- Docker n’est pas installé sur cette machine : les tests unitaires et le build passent
+  localement, et la CI GitHub exécute la migration PostgreSQL 16 ainsi que les tests
+  Testcontainers.
+- PostgreSQL 16 et Redis 7 restent nécessaires pour le développement local de l’étape 1.
 
 Le détail des décisions et le plan M1 se trouvent dans
 [`docs/modules/comptes-identite.md`](docs/modules/comptes-identite.md).
