@@ -21,7 +21,7 @@ function dockerDisponible(): boolean {
 const migrationSql = readFileSync(
   join(process.cwd(), 'prisma/migrations/20261022130000_lot_0_socle/migration.sql'),
   'utf8',
-);
+).replace(/^\s*--.*$/gm, '');
 
 describe.skipIf(!dockerDisponible())('Socle lot 0 (PostgreSQL + Redis)', () => {
   let postgres: StartedPostgreSqlContainer;
