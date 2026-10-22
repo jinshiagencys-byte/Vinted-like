@@ -1,11 +1,10 @@
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer, type StartedRedisContainer } from '@testcontainers/redis';
 import Redis from 'ioredis';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { appliquerToutesLesMigrations } from './migrations';
 
 function dockerDisponible(): boolean {
   if (process.env.RUN_INTEGRATION_TESTS !== 'true') return false;
@@ -17,11 +16,6 @@ function dockerDisponible(): boolean {
     return false;
   }
 }
-
-const migrationSql = readFileSync(
-  join(process.cwd(), 'prisma/migrations/20261022130000_lot_0_socle/migration.sql'),
-  'utf8',
-).replace(/^\s*--.*$/gm, '');
 
 describe.skipIf(!dockerDisponible())('Socle lot 0 (PostgreSQL + Redis)', () => {
   let postgres: StartedPostgreSqlContainer;
@@ -35,12 +29,7 @@ describe.skipIf(!dockerDisponible())('Socle lot 0 (PostgreSQL + Redis)', () => {
     process.env.DATABASE_URL = postgres.getConnectionUri();
     prisma = new PrismaClient();
 
-    for (const instruction of migrationSql.split(';')) {
-      const sql = instruction.trim();
-      if (sql.length > 0) {
-        await prisma.$executeRawUnsafe(sql);
-      }
-    }
+    await appliquerToutesLesMigrations(prisma);
   }, 120_000);
 
   afterAll(async () => {

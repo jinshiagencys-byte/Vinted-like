@@ -7,6 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum StatutCompte {
+  actif
+  restreint
+  suspendu
+  supprime
+}
+
+enum RoleCompte {
+  membre
+  moderateur
+  admin
+}
+
+enum TypeVerification {
+  email
+  telephone
+  identite
+}
+
+enum StatutVerification {
+  en_attente
+  valide
+  refuse
+  expire
+}
+
+enum Plateforme {
+  ios
+  android
+  web
+}
+
+enum VisibiliteProfil {
+  public
+  membres
+}
+
 /// Événements de domaine écrits dans la transaction métier (outbox).
 model OutboxEvenement {
   id             String    @id @db.Uuid
@@ -33,4 +70,134 @@ model InboxEvenement {
 
   @@id([evenementId, consommateur])
   @@map("inbox_evenements")
+}
+
+model Utilisateur {
+  id                  String       @id @default(uuid()) @db.Uuid
+  email               String       @unique @db.VarChar(254)
+  telephone           String?      @unique @db.VarChar(20)
+  motDePasseHash      String?      @map("mot_de_passe_hash")
+  pseudo              String       @db.VarChar(30)
+  pseudoNormalise     String       @unique @map("pseudo_normalise") @db.VarChar(30)
+  nomComplet          String?      @map("nom_complet") @db.VarChar(120)
+  dateNaissance       DateTime?    @map("date_naissance") @db.Date
+  pays                String       @default("FR") @db.Char(2)
+  statut              StatutCompte @default(actif)
+  role                RoleCompte   @default(membre)
+  emailVerifieLe      DateTime?    @map("email_verifie_le") @db.Timestamptz(3)
+  telephoneVerifieLe  DateTime?    @map("telephone_verifie_le") @db.Timestamptz(3)
+  noteMoyenne         Decimal      @default(0) @map("note_moyenne") @db.Decimal(2, 1)
+  nbVentes            Int          @default(0) @map("nb_ventes")
+  nbAchats            Int          @default(0) @map("nb_achats")
+  reputationVersion   Int          @default(0) @map("reputation_version")
+  versionSecurite     Int          @default(0) @map("version_securite")
+  derniereConnexionLe DateTime?    @map("derniere_connexion_le") @db.Timestamptz(3)
+  supprimeLe          DateTime?    @map("supprime_le") @db.Timestamptz(3)
+  version             Int          @default(0)
+  creeLe              DateTime     @default(now()) @map("cree_le") @db.Timestamptz(3)
+  majLe               DateTime     @updatedAt @map("maj_le") @db.Timestamptz(3)
+
+  profil            Profil?
+  adresses          Adresse[]
+  appareils         Appareil[]
+  verifications     Verification[]
+  reinitialisations ReinitialisationMotDePasse[]
+
+  @@index([statut])
+  @@index([creeLe])
+  @@map("utilisateurs")
+}
+
+model Profil {
+  id             String           @id @default(uuid()) @db.Uuid
+  utilisateurId  String           @unique @map("utilisateur_id") @db.Uuid
+  avatarUrl      String?          @map("avatar_url")
+  bio            String?          @db.VarChar(300)
+  tailleCm       Int?             @map("taille_cm")
+  pointure       Int?
+  stylesPreferes String[]         @default([]) @map("styles_preferes")
+  visibilite     VisibiliteProfil @default(public)
+  langue         String           @default("fr") @db.Char(2)
+  creeLe         DateTime         @default(now()) @map("cree_le") @db.Timestamptz(3)
+  majLe          DateTime         @updatedAt @map("maj_le") @db.Timestamptz(3)
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Restrict)
+
+  @@map("profils")
+}
+
+model Adresse {
+  id            String    @id @default(uuid()) @db.Uuid
+  utilisateurId String    @map("utilisateur_id") @db.Uuid
+  libelle       String    @db.VarChar(40)
+  destinataire  String    @db.VarChar(120)
+  ligne1        String    @db.VarChar(120)
+  ligne2        String?   @db.VarChar(120)
+  codePostal    String    @map("code_postal") @db.VarChar(10)
+  ville         String    @db.VarChar(120)
+  pays          String    @default("FR") @db.Char(2)
+  telephone     String    @db.VarChar(20)
+  estDefaut     Boolean   @default(false) @map("est_defaut")
+  supprimeeLe   DateTime? @map("supprimee_le") @db.Timestamptz(3)
+  creeLe        DateTime  @default(now()) @map("cree_le") @db.Timestamptz(3)
+  majLe         DateTime  @updatedAt @map("maj_le") @db.Timestamptz(3)
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Restrict)
+
+  @@index([utilisateurId])
+  @@map("adresses")
+}
+
+model Appareil {
+  id                        String     @id @default(uuid()) @db.Uuid
+  utilisateurId             String     @map("utilisateur_id") @db.Uuid
+  plateforme                Plateforme
+  deviceId                  String     @map("device_id") @db.VarChar(128)
+  refreshTokenHash          String?    @unique @map("refresh_token_hash") @db.VarChar(128)
+  refreshTokenPrecedentHash String?    @map("refresh_token_precedent_hash") @db.VarChar(128)
+  refreshTokenRotatedLe     DateTime?  @map("refresh_token_rotated_le") @db.Timestamptz(3)
+  refreshTokenExpireLe      DateTime?  @map("refresh_token_expire_le") @db.Timestamptz(3)
+  pushToken                 String?    @map("push_token") @db.VarChar(512)
+  derniereActiviteLe        DateTime?  @map("derniere_activite_le") @db.Timestamptz(3)
+  revoqueLe                 DateTime?  @map("revoque_le") @db.Timestamptz(3)
+  creeLe                    DateTime   @default(now()) @map("cree_le") @db.Timestamptz(3)
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Restrict)
+
+  @@unique([utilisateurId, deviceId])
+  @@index([utilisateurId, revoqueLe])
+  @@map("appareils")
+}
+
+model Verification {
+  id             String             @id @default(uuid()) @db.Uuid
+  utilisateurId  String             @map("utilisateur_id") @db.Uuid
+  type           TypeVerification
+  statut         StatutVerification @default(en_attente)
+  fournisseurRef String?            @map("fournisseur_ref") @db.VarChar(120)
+  codeHash       String?            @map("code_hash") @db.VarChar(128)
+  tentatives     Int                @default(0)
+  expireLe       DateTime           @map("expire_le") @db.Timestamptz(3)
+  valideLe       DateTime?          @map("valide_le") @db.Timestamptz(3)
+  creeLe         DateTime           @default(now()) @map("cree_le") @db.Timestamptz(3)
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Restrict)
+
+  @@index([utilisateurId, type, statut])
+  @@index([expireLe])
+  @@map("verifications")
+}
+
+model ReinitialisationMotDePasse {
+  id            String    @id @default(uuid()) @db.Uuid
+  utilisateurId String    @map("utilisateur_id") @db.Uuid
+  jetonHash     String    @unique @map("jeton_hash") @db.VarChar(128)
+  expireLe      DateTime  @map("expire_le") @db.Timestamptz(3)
+  utiliseLe     DateTime? @map("utilise_le") @db.Timestamptz(3)
+  creeLe        DateTime  @default(now()) @map("cree_le") @db.Timestamptz(3)
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Restrict)
+
+  @@index([utilisateurId])
+  @@map("reinitialisations_mot_de_passe")
 }

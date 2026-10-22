@@ -7,6 +7,7 @@ import { DatabaseModule } from './common/database/database.module';
 import { HealthController } from './common/http/health.controller';
 import { OutboxModule } from './common/outbox/outbox.module';
 import { RedisModule } from './common/redis/redis.module';
+import { ComptesModule } from './modules/comptes/comptes.module';
 
 function parseRedisUrl(url: string): {
   host: string;
@@ -44,6 +45,7 @@ function parseRedisUrl(url: string): {
     RedisModule,
     OutboxModule,
     AuthModule,
+    ComptesModule,
   ],
   controllers: [HealthController],
 })

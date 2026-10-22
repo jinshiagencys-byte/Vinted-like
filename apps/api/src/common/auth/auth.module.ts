@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { EmailVerifieGuard } from './email-verifie.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { ProprietaireGuard } from './proprietaire.guard';
 import { RolesGuard } from './roles.guard';
@@ -29,7 +30,7 @@ import { RolesGuard } from './roles.guard';
       }),
     }),
   ],
-  providers: [JwtAuthGuard, RolesGuard, ProprietaireGuard],
-  exports: [JwtModule, JwtAuthGuard, RolesGuard, ProprietaireGuard],
+  providers: [JwtAuthGuard, RolesGuard, ProprietaireGuard, EmailVerifieGuard],
+  exports: [JwtModule, JwtAuthGuard, RolesGuard, ProprietaireGuard, EmailVerifieGuard],
 })
 export class AuthModule {}
