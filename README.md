@@ -1,7 +1,7 @@
 # SecondeVie
 
-Monorepo du projet SecondeVie. Le lot 0 met en place le socle technique avant le module
-M1 (comptes et identité).
+Monorepo du projet SecondeVie. Le lot 0 fournit le socle technique ; M1 couvre les
+comptes et l’identité, M2 les annonces et le catalogue.
 
 ## Prérequis
 
@@ -38,7 +38,7 @@ pnpm build
 
 ```text
 apps/api/                 API NestJS
-packages/contracts/       contrats partagés et client typé M1
+packages/contracts/       contrats partagés et client typé M1/M2
 packages/config/          configuration TypeScript/Prettier partagée
 infra/docker/             PostgreSQL, Redis, MinIO
 docs/                     architecture, conception, ADR
@@ -54,8 +54,8 @@ docs/                     architecture, conception, ADR
 - [x] guards `JwtAuthGuard`, `RolesGuard`, `ProprietaireGuard`
 - [x] harnais Testcontainers (PostgreSQL, Redis) — validé en CI
 - [ ] alerte dead-letter outbox (les événements à 5 échecs restent en attente)
-- [ ] client S3/MinIO (nécessaire aux photos de M2)
-- [x] OpenAPI et client typé M1
+- [x] client S3/MinIO pour les photos de M2
+- [x] OpenAPI et client typé M1 et M2
 
 ## État M1 — comptes et identité
 
@@ -74,6 +74,27 @@ docs/                     architecture, conception, ADR
 
 Le runbook d’installation, de migration et de recette est dans
 [`docs/runbooks/comptes.md`](docs/runbooks/comptes.md).
+
+## État M2 — annonces et catalogue
+
+- [x] L1 : schéma Prisma, migration PostgreSQL 16, objets-valeurs, politiques,
+      repositories, seed versionné des catégories/marques/tailles
+- [x] L2 : brouillons, édition avec version optimiste, consultation publique,
+      pagination curseur, règles de visibilité et IDOR
+- [x] L3 : photos S3/MinIO, URL signées, worker `sharp`, EXIF, variantes WebP, pHash
+- [x] L4 : publication à trois issues, archivage, republication, quota transactionnel,
+      événements outbox
+- [x] L5 : favoris idempotents, cache Redis des référentiels avec ETag/304
+- [x] L6 : consommateurs commande/modération/compte/vues, purge RGPD des favoris
+- [x] 36 fichiers et 138 tests unitaires, `lint`, `typecheck`, `build` locaux
+- [ ] suite HTTP Testcontainers exécutée en CI (Docker absent localement)
+- [ ] écrans mobiles M2
+- [ ] jobs planifiés de purge et de réconciliation (avec M9)
+
+Le plan, les décisions provisoires et les limites sont dans
+[`docs/modules/M2-annonces-catalogue.md`](docs/modules/M2-annonces-catalogue.md). Le
+runbook est dans [`docs/runbooks/annonces.md`](docs/runbooks/annonces.md) et le contrat
+HTTP dans [`docs/openapi/m2-annonces.yaml`](docs/openapi/m2-annonces.yaml).
 
 ## Limites de l’environnement de développement
 

@@ -1,0 +1,791 @@
+openapi: 3.0.3
+info:
+  title: SecondeVie — M2 Annonces et catalogue
+  version: 1.0.0
+  description: |
+    Contrat HTTP du module M2. Toutes les routes sont préfixées par `/v1`.
+    Les erreurs suivent le format `{ code, message, details?, traceId }`.
+    Les routes publiques acceptent un jeton facultatif : un propriétaire ou un
+    modérateur conserve ainsi l’accès aux annonces masquées.
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Annonces
+  - name: Photos
+  - name: Favoris
+  - name: Référentiels
+paths:
+  /v1/annonces:
+    post:
+      tags: [Annonces]
+      summary: Créer un brouillon
+      description: Tous les champs sont facultatifs. La complétude est vérifiée à la publication.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChampsAnnonce'
+      responses:
+        '201':
+          description: Brouillon créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/annonces/{id}:
+    get:
+      tags: [Annonces]
+      summary: Consulter une annonce
+      description: |
+        Renvoie `404` pour une annonce masquée au public. Le propriétaire et les
+        modérateurs voient tous les statuts. Le motif de refus n’est jamais exposé
+        à un visiteur anonyme.
+      security:
+        - {}
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '200':
+          description: Annonce visible
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+    patch:
+      tags: [Annonces]
+      summary: Modifier une annonce
+      description: |
+        Exige la version courante. Une annonce `reservee` ou `vendue` est verrouillée.
+        Une annonce `refusee` repasse `brouillon` et son motif est effacé.
+        Une annonce `publiee` ou `en_revue` ne peut pas perdre un champ obligatoire :
+        la tentative renvoie `422 annonce_incomplete` sans modification.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModificationAnnonce'
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '200':
+          description: Annonce mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/moi/annonces:
+    get:
+      tags: [Annonces]
+      summary: Lister mes annonces
+      parameters:
+        - name: statut
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/StatutAnnonce'
+        - name: curseur
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 500
+        - name: limite
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Page d’annonces, triées par dernière modification décroissante
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageAnnonces'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+  /v1/annonces/{id}/photos:
+    post:
+      tags: [Photos]
+      summary: Préparer le téléversement d’une photo
+      description: |
+        Crée la ligne photo et renvoie une URL PUT signée. Le client téléverse
+        ensuite le fichier puis appelle la confirmation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreparationPhoto'
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '201':
+          description: URL de téléversement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoPreparee'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/annonces/{id}/photos/ordre:
+    patch:
+      tags: [Photos]
+      summary: Réordonner les photos
+      description: La liste doit contenir exactement toutes les photos de l’annonce.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [photoIds]
+              additionalProperties: false
+              properties:
+                photoIds:
+                  type: array
+                  minItems: 1
+                  maxItems: 12
+                  items:
+                    type: string
+                    format: uuid
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '200':
+          description: Annonce mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/annonces/{id}/photos/{photoId}/confirmer:
+    post:
+      tags: [Photos]
+      summary: Confirmer le téléversement et lancer le traitement
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+        - $ref: '#/components/parameters/IdPhoto'
+      responses:
+        '202':
+          description: Traitement en file
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [statutTraitement]
+                properties:
+                  statutTraitement:
+                    type: string
+                    enum: [en_attente]
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/annonces/{id}/photos/{photoId}/principale:
+    post:
+      tags: [Photos]
+      summary: Définir la photo principale
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+        - $ref: '#/components/parameters/IdPhoto'
+      responses:
+        '200':
+          description: Annonce mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '409':
+          $ref: '#/components/responses/Conflit'
+  /v1/annonces/{id}/photos/{photoId}:
+    delete:
+      tags: [Photos]
+      summary: Supprimer une photo
+      description: Une annonce en ligne doit conserver au moins une photo.
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+        - $ref: '#/components/parameters/IdPhoto'
+      responses:
+        '200':
+          description: Annonce mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/annonces/{id}/publier:
+    post:
+      tags: [Annonces]
+      summary: Publier une annonce
+      description: |
+        Trois issues sont possibles : `publiee`, `en_revue` (quasi-doublon ou doute)
+        et `refusee` (contact, terme interdit, doublon exact, catégorie ou taille
+        invalide). Les préalables incomplets renvoient `422` sans changer l’état.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VersionRequete'
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '200':
+          description: Issue de la publication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publication'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/annonces/{id}/archiver:
+    post:
+      tags: [Annonces]
+      summary: Archiver une annonce
+      description: Idempotent. Une annonce `reservee` ou `vendue` ne peut pas être archivée.
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '200':
+          description: Annonce archivée
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, statut, version]
+                properties:
+                  id: { type: string, format: uuid }
+                  statut: { type: string, enum: [archivee] }
+                  version: { type: integer, minimum: 0 }
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '409':
+          $ref: '#/components/responses/Conflit'
+  /v1/annonces/{id}/republier:
+    post:
+      tags: [Annonces]
+      summary: Republier une annonce archivée
+      description: Réutilise le même identifiant et la même référence (M2-Q2).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VersionRequete'
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '200':
+          description: Issue de la publication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publication'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/annonces/{id}/favori:
+    post:
+      tags: [Favoris]
+      summary: Ajouter un favori
+      description: Idempotent. Le compteur n’est incrémenté qu’à la première insertion.
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '200':
+          description: État du favori et compteur exact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favori'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+    delete:
+      tags: [Favoris]
+      summary: Retirer un favori
+      description: Idempotent, y compris si l’annonce a été archivée.
+      parameters:
+        - $ref: '#/components/parameters/IdAnnonce'
+      responses:
+        '200':
+          description: État du favori et compteur exact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favori'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+  /v1/referentiels/categories:
+    get:
+      tags: [Référentiels]
+      summary: Arbre des catégories actives
+      security: []
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Arbre de catégories
+          headers:
+            ETag:
+              schema: { type: string }
+            Cache-Control:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Categorie'
+        '304':
+          description: Arbre inchangé
+  /v1/referentiels/marques:
+    get:
+      tags: [Référentiels]
+      summary: Rechercher des marques
+      security: []
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 80
+            default: ''
+      responses:
+        '200':
+          description: Vingt marques maximum
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Marque'
+        '400':
+          $ref: '#/components/responses/Validation'
+  /v1/referentiels/tailles:
+    get:
+      tags: [Référentiels]
+      summary: Lister les tailles d’une catégorie
+      security: []
+      parameters:
+        - name: categorieId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Grilles de tailles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Taille'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IdAnnonce:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    IdPhoto:
+      name: photoId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+  responses:
+    Validation:
+      description: Requête invalide
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    NonAutorise:
+      description: Authentification requise ou session invalide
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Interdit:
+      description: Action interdite (e-mail non vérifié, compte non actif)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Introuvable:
+      description: Ressource introuvable ou masquée
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Conflit:
+      description: Conflit d’état ou de version
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    RegleMetier:
+      description: |
+        Règle métier non satisfaite. Codes notables : `annonce_incomplete`,
+        `photos_requises`, `photos_non_pretes`, `photo_invalide`,
+        `categorie_invalide`, `taille_invalide`, `quota_atteint`, `champ_invalide`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+  schemas:
+    Erreur:
+      type: object
+      required: [code, message, traceId]
+      properties:
+        code: { type: string }
+        message: { type: string }
+        details:
+          type: object
+          additionalProperties: true
+        traceId: { type: string }
+    StatutAnnonce:
+      type: string
+      enum: [brouillon, en_revue, publiee, reservee, vendue, archivee, refusee]
+    EtatArticle:
+      type: string
+      enum: [neuf_avec_etiquette, neuf_sans_etiquette, tres_bon, bon, satisfaisant]
+    Photo:
+      type: object
+      required:
+        - id
+        - annonceId
+        - urlVariantes
+        - ordre
+        - largeur
+        - hauteur
+        - statutTraitement
+        - statutModeration
+        - tailleOctets
+        - mimeType
+        - creeLe
+      properties:
+        id: { type: string, format: uuid }
+        annonceId: { type: string, format: uuid }
+        urlVariantes:
+          type: object
+          nullable: true
+          additionalProperties: { type: string }
+        ordre: { type: integer, minimum: 0 }
+        largeur: { type: integer, nullable: true }
+        hauteur: { type: integer, nullable: true }
+        statutTraitement:
+          type: string
+          enum: [en_attente, televersee, traitee, rejetee]
+        statutModeration:
+          type: string
+          enum: [ok, a_verifier, refusee]
+        tailleOctets: { type: integer, nullable: true }
+        mimeType: { type: string, nullable: true }
+        creeLe: { type: string, format: date-time }
+    Annonce:
+      type: object
+      required:
+        - id
+        - reference
+        - vendeurId
+        - titre
+        - description
+        - categorieId
+        - marqueId
+        - taille
+        - etat
+        - couleur
+        - matiere
+        - prixCents
+        - prixOrigineCents
+        - devise
+        - poidsG
+        - statut
+        - motifRefus
+        - nbVues
+        - nbFavoris
+        - version
+        - publieeLe
+        - archiveeLe
+        - creeLe
+        - majLe
+        - photos
+      properties:
+        id: { type: string, format: uuid }
+        reference:
+          type: string
+          pattern: '^SV-[0-9A-HJKMNP-TV-Z]{6}$'
+        vendeurId: { type: string, format: uuid }
+        titre: { type: string, nullable: true, maxLength: 80 }
+        description: { type: string, nullable: true, maxLength: 2000 }
+        categorieId: { type: string, format: uuid, nullable: true }
+        marqueId: { type: string, format: uuid, nullable: true }
+        taille: { type: string, nullable: true, maxLength: 12 }
+        etat:
+          allOf:
+            - $ref: '#/components/schemas/EtatArticle'
+          nullable: true
+        couleur: { type: string, nullable: true, maxLength: 30 }
+        matiere: { type: string, nullable: true, maxLength: 60 }
+        prixCents: { type: integer, nullable: true, minimum: 100, maximum: 500000 }
+        prixOrigineCents: { type: integer, nullable: true, minimum: 100, maximum: 500000 }
+        devise: { type: string, minLength: 3, maxLength: 3 }
+        poidsG: { type: integer, nullable: true, minimum: 50, maximum: 30000 }
+        statut:
+          $ref: '#/components/schemas/StatutAnnonce'
+        motifRefus: { type: string, nullable: true, maxLength: 300 }
+        nbVues: { type: integer, minimum: 0 }
+        nbFavoris: { type: integer, minimum: 0 }
+        version: { type: integer, minimum: 0 }
+        publieeLe: { type: string, format: date-time, nullable: true }
+        archiveeLe: { type: string, format: date-time, nullable: true }
+        creeLe: { type: string, format: date-time }
+        majLe: { type: string, format: date-time }
+        photos:
+          type: array
+          maxItems: 12
+          items:
+            $ref: '#/components/schemas/Photo'
+        roleActeur:
+          type: string
+          enum: [public, proprietaire, moderateur, admin]
+    PageAnnonces:
+      type: object
+      required: [items, curseurSuivant]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Annonce'
+        curseurSuivant:
+          type: string
+          nullable: true
+    ChampsAnnonce:
+      type: object
+      additionalProperties: false
+      properties:
+        titre: { type: string, minLength: 5, maxLength: 80 }
+        description: { type: string, minLength: 20, maxLength: 2000 }
+        categorieId: { type: string, format: uuid, nullable: true }
+        marqueId: { type: string, format: uuid, nullable: true }
+        taille: { type: string, minLength: 1, maxLength: 12, nullable: true }
+        etat:
+          allOf:
+            - $ref: '#/components/schemas/EtatArticle'
+          nullable: true
+        couleur: { type: string, minLength: 1, maxLength: 30, nullable: true }
+        matiere: { type: string, minLength: 1, maxLength: 60, nullable: true }
+        prixCents: { type: integer, minimum: 100, maximum: 500000, nullable: true }
+        prixOrigineCents: { type: integer, minimum: 100, maximum: 500000, nullable: true }
+        poidsG: { type: integer, minimum: 50, maximum: 30000, nullable: true }
+    ModificationAnnonce:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: { type: integer, minimum: 0 }
+        titre: { type: string, minLength: 5, maxLength: 80 }
+        description: { type: string, minLength: 20, maxLength: 2000 }
+        categorieId: { type: string, format: uuid, nullable: true }
+        marqueId: { type: string, format: uuid, nullable: true }
+        taille: { type: string, minLength: 1, maxLength: 12, nullable: true }
+        etat:
+          allOf:
+            - $ref: '#/components/schemas/EtatArticle'
+          nullable: true
+        couleur: { type: string, minLength: 1, maxLength: 30, nullable: true }
+        matiere: { type: string, minLength: 1, maxLength: 60, nullable: true }
+        prixCents: { type: integer, minimum: 100, maximum: 500000, nullable: true }
+        prixOrigineCents: { type: integer, minimum: 100, maximum: 500000, nullable: true }
+        poidsG: { type: integer, minimum: 50, maximum: 30000, nullable: true }
+    VersionRequete:
+      type: object
+      additionalProperties: false
+      required: [version]
+      properties:
+        version: { type: integer, minimum: 0 }
+    Publication:
+      type: object
+      required: [id, statut, version]
+      properties:
+        id: { type: string, format: uuid }
+        statut:
+          type: string
+          enum: [publiee, en_revue, refusee]
+        version: { type: integer, minimum: 0 }
+        motifRefus: { type: string }
+        publieeLe: { type: string, format: date-time }
+    PreparationPhoto:
+      type: object
+      additionalProperties: false
+      required: [nomFichier, mimeType, tailleOctets, largeur, hauteur]
+      properties:
+        nomFichier: { type: string, minLength: 1, maxLength: 255 }
+        mimeType:
+          type: string
+          enum: [image/jpeg, image/png, image/webp]
+        tailleOctets: { type: integer, minimum: 1, maximum: 8388608 }
+        largeur: { type: integer, minimum: 400 }
+        hauteur: { type: integer, minimum: 400 }
+    PhotoPreparee:
+      type: object
+      required: [photoId, urlTeleversement, expireLe, method, headers]
+      properties:
+        photoId: { type: string, format: uuid }
+        urlTeleversement: { type: string, format: uri }
+        expireLe: { type: string, format: date-time }
+        method: { type: string, enum: [PUT] }
+        headers:
+          type: object
+          additionalProperties: { type: string }
+    Favori:
+      type: object
+      required: [annonceId, favori, nbFavoris]
+      properties:
+        annonceId: { type: string, format: uuid }
+        favori: { type: boolean }
+        nbFavoris: { type: integer, minimum: 0 }
+    Categorie:
+      type: object
+      required: [id, parentId, nom, slug, niveau, tailleObligatoire, ordre, enfants]
+      properties:
+        id: { type: string, format: uuid }
+        parentId: { type: string, format: uuid, nullable: true }
+        nom: { type: string }
+        slug: { type: string }
+        niveau: { type: integer, minimum: 0, maximum: 2 }
+        tailleObligatoire: { type: boolean }
+        ordre: { type: integer }
+        enfants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Categorie'
+    Marque:
+      type: object
+      required: [id, nom, slug, logoUrl, verifiee]
+      properties:
+        id: { type: string, format: uuid }
+        nom: { type: string }
+        slug: { type: string }
+        logoUrl: { type: string, nullable: true }
+        verifiee: { type: boolean }
+    Taille:
+      type: object
+      required: [id, systeme, libelle, equivalentCm, ordre]
+      properties:
+        id: { type: string, format: uuid }
+        systeme: { type: string, enum: [EU, UK, US, FR, universel] }
+        libelle: { type: string }
+        equivalentCm: { type: integer, nullable: true }
+        ordre: { type: integer }
+security:
+  - bearerAuth: []

@@ -10,7 +10,7 @@ règles métier, événements, tests et lots d'implémentation.
 |---|---|---|
 | [`00-socle-commun.md`](./00-socle-commun.md) | Conventions, structure monorepo, erreurs, outbox, sécurité, tests, lot 0 | Proposition |
 | [`M1-comptes-identite.md`](./M1-comptes-identite.md) | Comptes, authentification, profils, adresses, appareils, vérifications, RGPD | Proposition |
-| [`M2-annonces-catalogue.md`](./M2-annonces-catalogue.md) | Annonces, photos, publication, favoris, référentiels, cycle de vie | Proposition |
+| [`M2-annonces-catalogue.md`](./M2-annonces-catalogue.md) | Annonces, photos, publication, favoris, référentiels, cycle de vie | Implémenté (décisions provisoires) |
 | M3 — Recherche et découverte | À concevoir | En attente |
 | M4 — Messagerie et négociation | À concevoir | En attente |
 | M5 — Commandes et paiements | À concevoir | En attente |
@@ -31,6 +31,10 @@ règles métier, événements, tests et lots d'implémentation.
 > [`M2-annonces-catalogue.md`](./M2-annonces-catalogue.md). Le plan opérationnel et les
 > décisions d’exécution sont consignés dans
 > [`docs/modules/M2-annonces-catalogue.md`](../modules/M2-annonces-catalogue.md).
+> L’implémentation est validée localement (lint, typecheck, tests, build) au 28/10/2026 ;
+> la suite HTTP Testcontainers reste à exécuter en CI. Voir le runbook
+> [`docs/runbooks/annonces.md`](../runbooks/annonces.md) et l’OpenAPI
+> [`docs/openapi/m2-annonces.yaml`](../openapi/m2-annonces.yaml).
 
 ## Ordre de conception proposé
 
@@ -71,10 +75,14 @@ d'abord :
 - **M1** : suppression immédiate ou délai de grâce (Q04), changement de pseudo (Q06),
   changement d’e-mail (Q07), périmètre de l’export RGPD (Q08), bibliothèque UI (Q11),
   authentification du back-office (Q12), limite par appareil (Q14).
-- **M2** : définition d'une annonce « active » ; republication avec la même référence ;
-  poids obligatoire à la publication.
+- **M2** : les décisions M2-Q1 à M2-Q13 sont tranchées provisoirement et implémentées
+  (quota, republication, poids, référentiels, doublons, acheteur, revue après édition,
+  vues, photos, mots interdits, favoris sans FK, suspension). Restent à confirmer en
+  recette : le quota de 20, le seuil de quasi-doublon à 6 et l’absence de
+  `GET /v1/moi/favoris` avant M3.
 - **Contrat d'événements** : M5 émet `commande.payee` puis M2 émet `annonce.reservee`
-  (proposition), ou M5 émet directement `annonce.reservee`.
+  (proposition), ou M5 émet directement `annonce.reservee`. M2 implémente la première
+  option et attend l’arbitrage final.
 
 Chaque plan se termine par une section « Points à valider ». Tant qu'ils ne sont pas
 tranchés, le code correspondant ne doit pas être figé.
