@@ -4,10 +4,12 @@ import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testconta
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { PrismaService } from '../../src/common/database/prisma.service';
 import { AdressePrismaRepository } from '../../src/modules/comptes/infrastructure/persistance/prisma/adresse.prisma.repository';
+import { AppareilPrismaRepository } from '../../src/modules/comptes/infrastructure/persistance/prisma/appareil.prisma.repository';
 import { VerificationPrismaRepository } from '../../src/modules/comptes/infrastructure/persistance/prisma/verification.prisma.repository';
 import {
   creerUtilisateur,
   donneesAdresse,
+  donneesAppareil,
   donneesUtilisateur,
   donneesVerification,
 } from '../factories/comptes';
@@ -28,6 +30,7 @@ describe.skipIf(!dockerDisponible())('Comptes M1 (PostgreSQL)', () => {
   let postgres: StartedPostgreSqlContainer;
   let prisma: PrismaService;
   let adresses: AdressePrismaRepository;
+  let appareils: AppareilPrismaRepository;
   let verifications: VerificationPrismaRepository;
 
   beforeAll(async () => {
@@ -35,6 +38,7 @@ describe.skipIf(!dockerDisponible())('Comptes M1 (PostgreSQL)', () => {
     process.env.DATABASE_URL = postgres.getConnectionUri();
     prisma = new PrismaService();
     adresses = new AdressePrismaRepository(prisma);
+    appareils = new AppareilPrismaRepository(prisma);
     verifications = new VerificationPrismaRepository(prisma);
 
     await appliquerToutesLesMigrations(prisma);
@@ -114,6 +118,77 @@ describe.skipIf(!dockerDisponible())('Comptes M1 (PostgreSQL)', () => {
     const apresDefaut = await adresses.listerActives(utilisateur.id);
     expect(apresDefaut.filter((adresse) => adresse.estDefaut)).toHaveLength(1);
     expect(apresDefaut.find((adresse) => adresse.id === troisieme.id)?.estDefaut).toBe(true);
+  });
+
+  it('gère deux créations concurrentes de compte avec le même e-mail', async () => {
+    const email = `race-${randomUUID()}@example.com`;
+
+    const resultats = await Promise.allSettled([
+      prisma.utilisateur.create({ data: donneesUtilisateur({ email }) }),
+      prisma.utilisateur.create({ data: donneesUtilisateur({ email }) }),
+    ]);
+
+    expect(resultats.filter((resultat) => resultat.status === 'fulfilled')).toHaveLength(1);
+    expect(resultats.filter((resultat) => resultat.status === 'rejected')).toHaveLength(1);
+  });
+
+  it('gère deux créations concurrentes de compte avec le même pseudo normalisé', async () => {
+    const pseudo = `Course_${randomUUID().slice(0, 8)}`;
+
+    const resultats = await Promise.allSettled([
+      prisma.utilisateur.create({
+        data: donneesUtilisateur({ pseudo, pseudoNormalise: pseudo.toLowerCase() }),
+      }),
+      prisma.utilisateur.create({
+        data: donneesUtilisateur({
+          pseudo: pseudo.toUpperCase(),
+          pseudoNormalise: pseudo.toLowerCase(),
+        }),
+      }),
+    ]);
+
+    expect(resultats.filter((resultat) => resultat.status === 'fulfilled')).toHaveLength(1);
+    expect(resultats.filter((resultat) => resultat.status === 'rejected')).toHaveLength(1);
+  });
+
+  it('gère deux adresses par défaut concurrentes avec un seul défaut final', async () => {
+    const utilisateur = await creerUtilisateur(prisma);
+
+    await Promise.all([
+      adresses.creer(donneesAdresse(utilisateur.id, { estDefaut: true })),
+      adresses.creer(donneesAdresse(utilisateur.id, { estDefaut: true })),
+    ]);
+
+    const actives = await adresses.listerActives(utilisateur.id);
+    expect(actives).toHaveLength(2);
+    expect(actives.filter((adresse) => adresse.estDefaut)).toHaveLength(1);
+  });
+
+  it('refuse l’accès aux adresses et appareils d’un autre membre', async () => {
+    const proprietaire = await creerUtilisateur(prisma);
+    const autre = await creerUtilisateur(prisma);
+    const adresse = await adresses.creer(donneesAdresse(proprietaire.id));
+    const donnees = donneesAppareil(proprietaire.id);
+    const appareil = await appareils.creer({
+      utilisateurId: donnees.utilisateurId,
+      plateforme: donnees.plateforme,
+      deviceId: donnees.deviceId,
+      refreshTokenHash: donnees.refreshTokenHash,
+      refreshTokenExpireLe: donnees.refreshTokenExpireLe as Date | null | undefined,
+      pushToken: donnees.pushToken,
+    });
+
+    expect(await adresses.trouverActive(autre.id, adresse.id)).toBeNull();
+    await expect(
+      adresses.mettreAJour(autre.id, adresse.id, { ville: 'Lyon' }),
+    ).rejects.toMatchObject({ code: 'adresse_introuvable' });
+    await expect(adresses.definirDefaut(autre.id, adresse.id)).rejects.toMatchObject({
+      code: 'adresse_introuvable',
+    });
+
+    expect(await appareils.trouverParId(autre.id, appareil.id)).toBeNull();
+    await appareils.revoquer(autre.id, appareil.id, new Date());
+    expect(await appareils.trouverParId(proprietaire.id, appareil.id)).not.toBeNull();
   });
 
   it('refuse un second défaut actif au niveau SQL', async () => {

@@ -65,9 +65,9 @@ export class AppareilPrismaRepository implements AppareilRepository {
     });
   }
 
-  async revoquer(id: string, revoqueLe: Date): Promise<void> {
+  async revoquer(utilisateurId: string, id: string, revoqueLe: Date): Promise<void> {
     await this.prisma.appareil.updateMany({
-      where: { id, revoqueLe: null },
+      where: { id, utilisateurId, revoqueLe: null },
       data: { revoqueLe },
     });
   }

@@ -139,7 +139,7 @@ export interface AppareilRepository {
   trouverParId(utilisateurId: string, id: string): Promise<Appareil | null>;
   trouverParHash(refreshTokenHash: string): Promise<Appareil | null>;
   enregistrerRotation(id: string, rotation: RotationRefresh): Promise<void>;
-  revoquer(id: string, revoqueLe: Date): Promise<void>;
+  revoquer(utilisateurId: string, id: string, revoqueLe: Date): Promise<void>;
   mettreAJourPushToken(utilisateurId: string, deviceId: string, pushToken: string): Promise<void>;
 }
 
