@@ -34,14 +34,14 @@ export class JwtAuthGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    if (estPublic) {
-      return true;
-    }
-
     const request = context.switchToHttp().getRequest<Request>();
     const authorization = request.headers.authorization;
 
     if (!authorization?.startsWith('Bearer ')) {
+      if (estPublic) {
+        return true;
+      }
+
       throw new UnauthorizedException({
         code: 'authentification_requise',
         message: 'Jeton d’accès manquant.',
@@ -77,6 +77,12 @@ export class JwtAuthGuard implements CanActivate {
 
       return true;
     } catch {
+      // Une route publique reste accessible avec un jeton invalide : elle ne
+      // doit pas transformer une session expirée en erreur de lecture.
+      if (estPublic) {
+        return true;
+      }
+
       throw new UnauthorizedException({
         code: 'authentification_requise',
         message: 'Jeton d’accès invalide ou expiré.',

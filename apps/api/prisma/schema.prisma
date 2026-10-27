@@ -224,3 +224,174 @@ model ExportRgpd {
   @@index([utilisateurId, creeLe])
   @@map("exports_rgpd")
 }
+
+// ---------------------------------------------------------------------------
+// M2 — annonces et catalogue
+// ---------------------------------------------------------------------------
+
+enum StatutAnnonce {
+  brouillon
+  en_revue
+  publiee
+  reservee
+  vendue
+  archivee
+  refusee
+}
+
+enum EtatArticle {
+  neuf_avec_etiquette
+  neuf_sans_etiquette
+  tres_bon
+  bon
+  satisfaisant
+}
+
+enum StatutTraitementPhoto {
+  en_attente
+  televersee
+  traitee
+  rejetee
+}
+
+enum StatutModerationPhoto {
+  ok
+  a_verifier
+  refusee
+}
+
+enum SystemeTaille {
+  EU
+  UK
+  US
+  FR
+  universel
+}
+
+model Categorie {
+  id                String    @id @default(uuid()) @db.Uuid
+  parentId          String?   @map("parent_id") @db.Uuid
+  nom               String    @db.VarChar(60)
+  slug              String    @unique @db.VarChar(60)
+  niveau            Int
+  tailleObligatoire Boolean   @default(true) @map("taille_obligatoire")
+  actif             Boolean   @default(true)
+  ordre             Int       @default(0)
+  creeLe            DateTime  @default(now()) @map("cree_le") @db.Timestamptz(3)
+  majLe             DateTime  @updatedAt @map("maj_le") @db.Timestamptz(3)
+
+  parent   Categorie?         @relation("ArbreCategorie", fields: [parentId], references: [id], onDelete: Restrict)
+  enfants  Categorie[]        @relation("ArbreCategorie")
+  tailles  ReferentielTaille[]
+  annonces Annonce[]
+
+  @@index([parentId, ordre])
+  @@map("categories")
+}
+
+model Marque {
+  id           String   @id @default(uuid()) @db.Uuid
+  nom          String   @db.VarChar(80)
+  nomNormalise String   @unique @map("nom_normalise") @db.VarChar(80)
+  slug         String   @unique @db.VarChar(80)
+  logoUrl      String?  @map("logo_url")
+  verifiee     Boolean  @default(false)
+  actif        Boolean  @default(true)
+  creeLe       DateTime @default(now()) @map("cree_le") @db.Timestamptz(3)
+  majLe        DateTime @updatedAt @map("maj_le") @db.Timestamptz(3)
+
+  annonces Annonce[]
+
+  @@index([actif, nomNormalise])
+  @@map("marques")
+}
+
+model Annonce {
+  id               String        @id @default(uuid()) @db.Uuid
+  reference        String        @unique @db.VarChar(12)
+  vendeurId        String        @map("vendeur_id") @db.Uuid
+  titre            String?       @db.VarChar(80)
+  description      String?       @db.VarChar(2000)
+  categorieId      String?       @map("categorie_id") @db.Uuid
+  marqueId         String?       @map("marque_id") @db.Uuid
+  taille           String?       @db.VarChar(12)
+  etat             EtatArticle?
+  couleur          String?       @db.VarChar(30)
+  matiere          String?       @db.VarChar(60)
+  prixCents        Int?          @map("prix_cents")
+  prixOrigineCents Int?          @map("prix_origine_cents")
+  devise           String        @default("EUR") @db.Char(3)
+  poidsG           Int?          @map("poids_g")
+  statut           StatutAnnonce @default(brouillon)
+  motifRefus       String?       @map("motif_refus") @db.VarChar(300)
+  nbVues           Int           @default(0) @map("nb_vues")
+  nbFavoris        Int           @default(0) @map("nb_favoris")
+  version          Int           @default(0)
+  publieeLe        DateTime?     @map("publiee_le") @db.Timestamptz(3)
+  archiveeLe       DateTime?     @map("archivee_le") @db.Timestamptz(3)
+  creeLe           DateTime      @default(now()) @map("cree_le") @db.Timestamptz(3)
+  majLe            DateTime      @updatedAt @map("maj_le") @db.Timestamptz(3)
+
+  categorie Categorie? @relation(fields: [categorieId], references: [id], onDelete: Restrict)
+  marque    Marque?    @relation(fields: [marqueId], references: [id], onDelete: Restrict)
+  photos    Photo[]
+  favoris   Favori[]
+
+  @@index([vendeurId, statut, majLe])
+  @@index([statut, publieeLe])
+  @@index([categorieId, statut])
+  @@index([marqueId])
+  @@map("annonces")
+}
+
+model Photo {
+  id               String                 @id @default(uuid()) @db.Uuid
+  annonceId        String                 @map("annonce_id") @db.Uuid
+  urlOriginale     String?                @map("url_originale")
+  urlVariantes     Json?                  @map("url_variantes")
+  ordre            Int
+  largeur          Int?
+  hauteur          Int?
+  perceptHash      String?                @map("percept_hash") @db.VarChar(16)
+  statutTraitement StatutTraitementPhoto  @default(en_attente) @map("statut_traitement")
+  statutModeration StatutModerationPhoto  @default(ok) @map("statut_moderation")
+  tailleOctets     Int?                   @map("taille_octets")
+  mimeType         String?                @map("mime_type") @db.VarChar(40)
+  creeLe           DateTime               @default(now()) @map("cree_le") @db.Timestamptz(3)
+
+  annonce Annonce @relation(fields: [annonceId], references: [id], onDelete: Cascade)
+
+  @@index([annonceId, ordre])
+  @@index([perceptHash])
+  @@map("photos")
+}
+
+model Favori {
+  id            String   @id @default(uuid()) @db.Uuid
+  utilisateurId String   @map("utilisateur_id") @db.Uuid
+  annonceId     String   @map("annonce_id") @db.Uuid
+  creeLe        DateTime @default(now()) @map("cree_le") @db.Timestamptz(3)
+
+  annonce Annonce @relation(fields: [annonceId], references: [id], onDelete: Cascade)
+
+  @@unique([utilisateurId, annonceId])
+  @@index([annonceId])
+  @@index([utilisateurId, creeLe])
+  @@map("favoris")
+}
+
+model ReferentielTaille {
+  id           String        @id @default(uuid()) @db.Uuid
+  categorieId  String        @map("categorie_id") @db.Uuid
+  systeme      SystemeTaille
+  libelle      String        @db.VarChar(12)
+  equivalentCm Int?          @map("equivalent_cm")
+  ordre        Int           @default(0)
+  creeLe       DateTime      @default(now()) @map("cree_le") @db.Timestamptz(3)
+
+  categorie Categorie @relation(fields: [categorieId], references: [id], onDelete: Cascade)
+
+  @@unique([categorieId, systeme, libelle])
+  @@index([categorieId, ordre])
+  @@map("referentiels_tailles")
+}

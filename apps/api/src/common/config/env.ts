@@ -22,9 +22,42 @@ export const envSchema = z.object({
   EXPORT_DIR: z.string().default('.exports'),
   CORS_ORIGINS: z.string().default('http://localhost:8081'),
   LOG_LEVEL: z.enum(logLevels).default('info'),
+  // Stockage objet des photos (M2). Les valeurs par défaut correspondent au
+  // MinIO de `infra/docker/docker-compose.yml` ; la production les remplace.
+  S3_ENDPOINT: z.string().default('http://localhost:9000'),
+  S3_REGION: z.string().default('eu-west-1'),
+  S3_ACCESS_KEY_ID: z.string().default('secondevie'),
+  S3_SECRET_ACCESS_KEY: z.string().default('secondevie-secret'),
+  S3_BUCKET: z.string().default('secondevie'),
+  S3_PUBLIC_BASE_URL: z.string().default('http://localhost:9000/secondevie'),
+  S3_FORCE_PATH_STYLE: z.string().default('true'),
+  S3_PRESIGN_SECONDS: z.coerce.number().int().min(60).max(3_600).default(900),
 });
 
 export type Env = z.infer<typeof envSchema>;
+
+const MARQUEURS_DEVELOPPEMENT: ReadonlyArray<readonly [keyof Env, readonly string[]]> = [
+  ['JWT_SECRET', ['change-me']],
+  ['AUTH_CODE_PEPPER', ['change-me']],
+  ['AUTH_REFRESH_PEPPER', ['change-me']],
+  ['AUTH_RESET_PEPPER', ['change-me']],
+  ['EXPORT_SIGNING_SECRET', ['change-me']],
+  ['S3_ACCESS_KEY_ID', ['secondevie']],
+  ['S3_SECRET_ACCESS_KEY', ['secondevie-secret']],
+];
+
+function verifierConfigurationProduction(env: Env): void {
+  if (env.NODE_ENV !== 'production') return;
+
+  for (const [cle, marqueurs] of MARQUEURS_DEVELOPPEMENT) {
+    const valeur = String(env[cle]);
+
+    if (marqueurs.some((marqueur) => valeur === marqueur || valeur.startsWith(`${marqueur}-`))) {
+      // Le nom du champ suffit : ne jamais recopier la valeur dans le message.
+      throw new Error(`Configuration invalide : ${cle} doit être remplacé en production`);
+    }
+  }
+}
 
 /**
  * Validation au démarrage : aucune variable requise ne doit être absente.
@@ -39,6 +72,8 @@ export function validateEnv(config: Record<string, unknown>): Env {
       .join('; ');
     throw new Error(`Configuration invalide : ${details}`);
   }
+
+  verifierConfigurationProduction(parsed.data);
 
   return parsed.data;
 }

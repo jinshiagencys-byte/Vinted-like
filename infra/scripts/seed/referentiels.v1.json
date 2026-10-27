@@ -1,0 +1,1988 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "slug": "femme",
+      "nom": "Femme",
+      "parent": null,
+      "tailleObligatoire": false,
+      "ordre": 1
+    },
+    {
+      "slug": "femme-vestes",
+      "nom": "Vestes et manteaux",
+      "parent": "femme",
+      "tailleObligatoire": true,
+      "ordre": 1
+    },
+    {
+      "slug": "femme-robes",
+      "nom": "Robes",
+      "parent": "femme",
+      "tailleObligatoire": true,
+      "ordre": 2
+    },
+    {
+      "slug": "femme-hauts",
+      "nom": "Hauts et t-shirts",
+      "parent": "femme",
+      "tailleObligatoire": true,
+      "ordre": 3
+    },
+    {
+      "slug": "femme-pantalons",
+      "nom": "Pantalons et jeans",
+      "parent": "femme",
+      "tailleObligatoire": true,
+      "ordre": 4
+    },
+    {
+      "slug": "femme-chaussures",
+      "nom": "Chaussures",
+      "parent": "femme",
+      "tailleObligatoire": true,
+      "ordre": 5
+    },
+    {
+      "slug": "femme-accessoires",
+      "nom": "Accessoires",
+      "parent": "femme",
+      "tailleObligatoire": false,
+      "ordre": 6
+    },
+    {
+      "slug": "homme",
+      "nom": "Homme",
+      "parent": null,
+      "tailleObligatoire": false,
+      "ordre": 2
+    },
+    {
+      "slug": "homme-vestes",
+      "nom": "Vestes et manteaux",
+      "parent": "homme",
+      "tailleObligatoire": true,
+      "ordre": 1
+    },
+    {
+      "slug": "homme-hauts",
+      "nom": "Hauts et t-shirts",
+      "parent": "homme",
+      "tailleObligatoire": true,
+      "ordre": 2
+    },
+    {
+      "slug": "homme-pantalons",
+      "nom": "Pantalons et jeans",
+      "parent": "homme",
+      "tailleObligatoire": true,
+      "ordre": 3
+    },
+    {
+      "slug": "homme-chaussures",
+      "nom": "Chaussures",
+      "parent": "homme",
+      "tailleObligatoire": true,
+      "ordre": 4
+    },
+    {
+      "slug": "homme-accessoires",
+      "nom": "Accessoires",
+      "parent": "homme",
+      "tailleObligatoire": false,
+      "ordre": 5
+    },
+    {
+      "slug": "enfant",
+      "nom": "Enfant",
+      "parent": null,
+      "tailleObligatoire": false,
+      "ordre": 3
+    },
+    {
+      "slug": "enfant-hauts",
+      "nom": "Hauts",
+      "parent": "enfant",
+      "tailleObligatoire": true,
+      "ordre": 1
+    },
+    {
+      "slug": "enfant-pantalons",
+      "nom": "Pantalons",
+      "parent": "enfant",
+      "tailleObligatoire": true,
+      "ordre": 2
+    },
+    {
+      "slug": "enfant-chaussures",
+      "nom": "Chaussures",
+      "parent": "enfant",
+      "tailleObligatoire": true,
+      "ordre": 3
+    },
+    {
+      "slug": "maison",
+      "nom": "Maison",
+      "parent": null,
+      "tailleObligatoire": false,
+      "ordre": 4
+    },
+    {
+      "slug": "maison-decoration",
+      "nom": "Décoration",
+      "parent": "maison",
+      "tailleObligatoire": false,
+      "ordre": 1
+    },
+    {
+      "slug": "maison-linge",
+      "nom": "Linge de maison",
+      "parent": "maison",
+      "tailleObligatoire": false,
+      "ordre": 2
+    },
+    {
+      "slug": "loisirs",
+      "nom": "Loisirs",
+      "parent": null,
+      "tailleObligatoire": false,
+      "ordre": 5
+    },
+    {
+      "slug": "loisirs-livres",
+      "nom": "Livres",
+      "parent": "loisirs",
+      "tailleObligatoire": false,
+      "ordre": 1
+    },
+    {
+      "slug": "loisirs-sport",
+      "nom": "Sport",
+      "parent": "loisirs",
+      "tailleObligatoire": false,
+      "ordre": 2
+    }
+  ],
+  "marques": [
+    {
+      "nom": "Levi's",
+      "slug": "levis",
+      "verifiee": true
+    },
+    {
+      "nom": "Nike",
+      "slug": "nike",
+      "verifiee": true
+    },
+    {
+      "nom": "Adidas",
+      "slug": "adidas",
+      "verifiee": true
+    },
+    {
+      "nom": "Zara",
+      "slug": "zara",
+      "verifiee": true
+    },
+    {
+      "nom": "H&M",
+      "slug": "h-m",
+      "verifiee": true
+    },
+    {
+      "nom": "Uniqlo",
+      "slug": "uniqlo",
+      "verifiee": true
+    },
+    {
+      "nom": "The North Face",
+      "slug": "the-north-face",
+      "verifiee": true
+    },
+    {
+      "nom": "Patagonia",
+      "slug": "patagonia",
+      "verifiee": true
+    },
+    {
+      "nom": "Lacoste",
+      "slug": "lacoste",
+      "verifiee": true
+    },
+    {
+      "nom": "Ralph Lauren",
+      "slug": "ralph-lauren",
+      "verifiee": true
+    },
+    {
+      "nom": "Tommy Hilfiger",
+      "slug": "tommy-hilfiger",
+      "verifiee": true
+    },
+    {
+      "nom": "Calvin Klein",
+      "slug": "calvin-klein",
+      "verifiee": true
+    },
+    {
+      "nom": "Diesel",
+      "slug": "diesel",
+      "verifiee": true
+    },
+    {
+      "nom": "Guess",
+      "slug": "guess",
+      "verifiee": true
+    },
+    {
+      "nom": "Vans",
+      "slug": "vans",
+      "verifiee": true
+    },
+    {
+      "nom": "Converse",
+      "slug": "converse",
+      "verifiee": true
+    },
+    {
+      "nom": "New Balance",
+      "slug": "new-balance",
+      "verifiee": true
+    },
+    {
+      "nom": "Puma",
+      "slug": "puma",
+      "verifiee": true
+    },
+    {
+      "nom": "Reebok",
+      "slug": "reebok",
+      "verifiee": true
+    },
+    {
+      "nom": "Decathlon",
+      "slug": "decathlon",
+      "verifiee": true
+    },
+    {
+      "nom": "Kiabi",
+      "slug": "kiabi",
+      "verifiee": false
+    },
+    {
+      "nom": "Petit Bateau",
+      "slug": "petit-bateau",
+      "verifiee": false
+    },
+    {
+      "nom": "Sézane",
+      "slug": "sezane",
+      "verifiee": false
+    },
+    {
+      "nom": "Sandro",
+      "slug": "sandro",
+      "verifiee": false
+    },
+    {
+      "nom": "Maje",
+      "slug": "maje",
+      "verifiee": false
+    },
+    {
+      "nom": "Cos",
+      "slug": "cos",
+      "verifiee": false
+    },
+    {
+      "nom": "Mango",
+      "slug": "mango",
+      "verifiee": false
+    },
+    {
+      "nom": "Bershka",
+      "slug": "bershka",
+      "verifiee": false
+    },
+    {
+      "nom": "Pull&Bear",
+      "slug": "pull-bear",
+      "verifiee": false
+    }
+  ],
+  "tailles": [
+    {
+      "categorie": "femme-vestes",
+      "systeme": "FR",
+      "libelle": "34",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "FR",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "FR",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "FR",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "FR",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "FR",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "FR",
+      "libelle": "46",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "UK",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "UK",
+      "libelle": "16",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "UK",
+      "libelle": "18",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "US",
+      "libelle": "2",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-vestes",
+      "systeme": "US",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "FR",
+      "libelle": "34",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "FR",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "FR",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "FR",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "FR",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "FR",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "FR",
+      "libelle": "46",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "UK",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "UK",
+      "libelle": "16",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "UK",
+      "libelle": "18",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "US",
+      "libelle": "2",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-robes",
+      "systeme": "US",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "FR",
+      "libelle": "34",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "FR",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "FR",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "FR",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "FR",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "FR",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "FR",
+      "libelle": "46",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "UK",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "UK",
+      "libelle": "16",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "UK",
+      "libelle": "18",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "US",
+      "libelle": "2",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-hauts",
+      "systeme": "US",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "FR",
+      "libelle": "34",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "FR",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "FR",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "FR",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "FR",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "FR",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "FR",
+      "libelle": "46",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "UK",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "UK",
+      "libelle": "16",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "UK",
+      "libelle": "18",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "US",
+      "libelle": "2",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-pantalons",
+      "systeme": "US",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "FR",
+      "libelle": "34",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "FR",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "FR",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "FR",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "FR",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "FR",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "FR",
+      "libelle": "46",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "UK",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "UK",
+      "libelle": "16",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "UK",
+      "libelle": "18",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "US",
+      "libelle": "2",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-vestes",
+      "systeme": "US",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "FR",
+      "libelle": "34",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "FR",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "FR",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "FR",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "FR",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "FR",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "FR",
+      "libelle": "46",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "UK",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "UK",
+      "libelle": "16",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "UK",
+      "libelle": "18",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "US",
+      "libelle": "2",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-hauts",
+      "systeme": "US",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "FR",
+      "libelle": "34",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "FR",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "FR",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "FR",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "FR",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "FR",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "FR",
+      "libelle": "46",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "UK",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "UK",
+      "libelle": "16",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "UK",
+      "libelle": "18",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "US",
+      "libelle": "2",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-pantalons",
+      "systeme": "US",
+      "libelle": "14",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "37",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "39",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "41",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "43",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 8
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "EU",
+      "libelle": "45",
+      "equivalentCm": null,
+      "ordre": 9
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "3",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "5",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "7",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "9",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "11",
+      "equivalentCm": null,
+      "ordre": 8
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 9
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "5",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "7",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "9",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "11",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 8
+    },
+    {
+      "categorie": "femme-chaussures",
+      "systeme": "US",
+      "libelle": "13",
+      "equivalentCm": null,
+      "ordre": 9
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "36",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "37",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "38",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "39",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "40",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "41",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "42",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "43",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "44",
+      "equivalentCm": null,
+      "ordre": 8
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "EU",
+      "libelle": "45",
+      "equivalentCm": null,
+      "ordre": 9
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "3",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "5",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "7",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "9",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "11",
+      "equivalentCm": null,
+      "ordre": 8
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "UK",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 9
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "4",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "5",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "6",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "7",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "8",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "9",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "10",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "11",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "12",
+      "equivalentCm": null,
+      "ordre": 8
+    },
+    {
+      "categorie": "homme-chaussures",
+      "systeme": "US",
+      "libelle": "13",
+      "equivalentCm": null,
+      "ordre": 9
+    },
+    {
+      "categorie": "enfant-hauts",
+      "systeme": "FR",
+      "libelle": "2 ans",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "enfant-hauts",
+      "systeme": "FR",
+      "libelle": "3 ans",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "enfant-hauts",
+      "systeme": "FR",
+      "libelle": "4 ans",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "enfant-hauts",
+      "systeme": "FR",
+      "libelle": "5 ans",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "enfant-hauts",
+      "systeme": "FR",
+      "libelle": "6 ans",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "enfant-hauts",
+      "systeme": "FR",
+      "libelle": "8 ans",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "enfant-hauts",
+      "systeme": "FR",
+      "libelle": "10 ans",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "enfant-hauts",
+      "systeme": "FR",
+      "libelle": "12 ans",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "enfant-pantalons",
+      "systeme": "FR",
+      "libelle": "2 ans",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "enfant-pantalons",
+      "systeme": "FR",
+      "libelle": "3 ans",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "enfant-pantalons",
+      "systeme": "FR",
+      "libelle": "4 ans",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "enfant-pantalons",
+      "systeme": "FR",
+      "libelle": "5 ans",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "enfant-pantalons",
+      "systeme": "FR",
+      "libelle": "6 ans",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "enfant-pantalons",
+      "systeme": "FR",
+      "libelle": "8 ans",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "enfant-pantalons",
+      "systeme": "FR",
+      "libelle": "10 ans",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "enfant-pantalons",
+      "systeme": "FR",
+      "libelle": "12 ans",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "20",
+      "equivalentCm": null,
+      "ordre": 0
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "21",
+      "equivalentCm": null,
+      "ordre": 1
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "22",
+      "equivalentCm": null,
+      "ordre": 2
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "23",
+      "equivalentCm": null,
+      "ordre": 3
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "24",
+      "equivalentCm": null,
+      "ordre": 4
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "25",
+      "equivalentCm": null,
+      "ordre": 5
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "26",
+      "equivalentCm": null,
+      "ordre": 6
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "27",
+      "equivalentCm": null,
+      "ordre": 7
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "28",
+      "equivalentCm": null,
+      "ordre": 8
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "29",
+      "equivalentCm": null,
+      "ordre": 9
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "30",
+      "equivalentCm": null,
+      "ordre": 10
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "31",
+      "equivalentCm": null,
+      "ordre": 11
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "32",
+      "equivalentCm": null,
+      "ordre": 12
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "33",
+      "equivalentCm": null,
+      "ordre": 13
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "34",
+      "equivalentCm": null,
+      "ordre": 14
+    },
+    {
+      "categorie": "enfant-chaussures",
+      "systeme": "EU",
+      "libelle": "35",
+      "equivalentCm": null,
+      "ordre": 15
+    }
+  ]
+}

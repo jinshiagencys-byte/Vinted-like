@@ -1,3 +1,17 @@
+import type {
+  Annonce,
+  CategorieReferentiel,
+  CreationAnnonce,
+  FavoriAnnonce,
+  MarqueReferentiel,
+  ModificationAnnonce,
+  PageAnnonces,
+  PhotoPreparee,
+  PublicationAnnonce,
+  StatutAnnonce,
+  TailleReferentiel,
+} from './api-annonces';
+
 export type Plateforme = 'ios' | 'android' | 'web';
 export type Role = 'membre' | 'moderateur' | 'admin' | 'systeme';
 
@@ -457,5 +471,127 @@ export class ClientApi {
   urlTelechargementExport(urlSignee: string): string {
     if (/^https?:\/\//i.test(urlSignee)) return urlSignee;
     return `${this.options.baseUrl.replace(/\/$/, '')}${urlSignee}`;
+  }
+
+  creerAnnonce(payload: CreationAnnonce = {}): Promise<Annonce> {
+    return this.requete('/v1/annonces', { methode: 'POST', corps: payload });
+  }
+
+  modifierAnnonce(id: string, payload: ModificationAnnonce): Promise<Annonce> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(id)}`, {
+      methode: 'PATCH',
+      corps: payload,
+    });
+  }
+
+  consulterAnnonce(id: string): Promise<Annonce> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(id)}`);
+  }
+
+  listerMesAnnonces(
+    options: {
+      statut?: StatutAnnonce;
+      curseur?: string;
+      limite?: number;
+    } = {},
+  ): Promise<PageAnnonces<Annonce>> {
+    const parametres = new URLSearchParams();
+
+    if (options.statut) parametres.set('statut', options.statut);
+    if (options.curseur) parametres.set('curseur', options.curseur);
+    if (options.limite !== undefined) parametres.set('limite', String(options.limite));
+
+    const requete = parametres.toString();
+    return this.requete(`/v1/moi/annonces${requete ? `?${requete}` : ''}`);
+  }
+
+  publierAnnonce(id: string, version: number): Promise<PublicationAnnonce> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(id)}/publier`, {
+      methode: 'POST',
+      corps: { version },
+    });
+  }
+
+  archiverAnnonce(id: string): Promise<{ id: string; statut: 'archivee'; version: number }> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(id)}/archiver`, { methode: 'POST' });
+  }
+
+  republierAnnonce(id: string, version: number): Promise<PublicationAnnonce> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(id)}/republier`, {
+      methode: 'POST',
+      corps: { version },
+    });
+  }
+
+  preparerPhoto(
+    annonceId: string,
+    payload: {
+      nomFichier: string;
+      mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
+      tailleOctets: number;
+      largeur: number;
+      hauteur: number;
+    },
+  ): Promise<PhotoPreparee> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(annonceId)}/photos`, {
+      methode: 'POST',
+      corps: payload,
+    });
+  }
+
+  confirmerPhoto(annonceId: string, photoId: string): Promise<{ statutTraitement: 'en_attente' }> {
+    return this.requete(
+      `/v1/annonces/${encodeURIComponent(annonceId)}/photos/${encodeURIComponent(photoId)}/confirmer`,
+      { methode: 'POST' },
+    );
+  }
+
+  supprimerPhoto(annonceId: string, photoId: string): Promise<Annonce> {
+    return this.requete(
+      `/v1/annonces/${encodeURIComponent(annonceId)}/photos/${encodeURIComponent(photoId)}`,
+      { methode: 'DELETE' },
+    );
+  }
+
+  reordonnerPhotos(annonceId: string, photoIds: string[]): Promise<Annonce> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(annonceId)}/photos/ordre`, {
+      methode: 'PATCH',
+      corps: { photoIds },
+    });
+  }
+
+  definirPhotoPrincipale(annonceId: string, photoId: string): Promise<Annonce> {
+    return this.requete(
+      `/v1/annonces/${encodeURIComponent(annonceId)}/photos/${encodeURIComponent(photoId)}/principale`,
+      { methode: 'POST' },
+    );
+  }
+
+  ajouterFavori(annonceId: string): Promise<FavoriAnnonce> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(annonceId)}/favori`, {
+      methode: 'POST',
+    });
+  }
+
+  retirerFavori(annonceId: string): Promise<FavoriAnnonce> {
+    return this.requete(`/v1/annonces/${encodeURIComponent(annonceId)}/favori`, {
+      methode: 'DELETE',
+    });
+  }
+
+  listerCategories(): Promise<CategorieReferentiel[]> {
+    return this.requete('/v1/referentiels/categories', { authentifie: false });
+  }
+
+  rechercherMarques(q = ''): Promise<MarqueReferentiel[]> {
+    return this.requete(`/v1/referentiels/marques?q=${encodeURIComponent(q)}`, {
+      authentifie: false,
+    });
+  }
+
+  listerTailles(categorieId: string): Promise<TailleReferentiel[]> {
+    return this.requete(`/v1/referentiels/tailles?categorieId=${encodeURIComponent(categorieId)}`, {
+      authentifie: false,
+    });
   }
 }

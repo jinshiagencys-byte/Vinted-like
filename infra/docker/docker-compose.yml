@@ -42,6 +42,24 @@ services:
     volumes:
       - secondevie-minio:/data
 
+  # Crée le bucket et ouvre en lecture les seules variantes publiques.
+  # Les originaux et les fichiers temporaires restent privés.
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      - minio
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        until mc alias set local http://minio:9000 secondevie secondevie-secret >/dev/null 2>&1 &&
+              mc ready local >/dev/null 2>&1; do
+          sleep 2
+        done
+        mc mb --ignore-existing local/secondevie
+        mc anonymous set download local/secondevie/variantes
+        exit 0
+
 volumes:
   secondevie-postgres:
   secondevie-redis:

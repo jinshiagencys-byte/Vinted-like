@@ -38,4 +38,28 @@ describe('validateEnv', () => {
     expect(message).toContain('JWT_SECRET');
     expect(message).not.toContain('court');
   });
+
+  it('refuse les marqueurs de développement en production sans les afficher', () => {
+    let message = '';
+
+    try {
+      validateEnv({ ...base, NODE_ENV: 'production' });
+    } catch (error: unknown) {
+      message = error instanceof Error ? error.message : '';
+    }
+
+    expect(message).toContain('S3_ACCESS_KEY_ID');
+    expect(message).not.toContain('secondevie-secret');
+  });
+
+  it('accepte une configuration de production complète', () => {
+    const env = validateEnv({
+      ...base,
+      NODE_ENV: 'production',
+      S3_ACCESS_KEY_ID: 'cle-production',
+      S3_SECRET_ACCESS_KEY: 'secret-production-suffisamment-long',
+    });
+
+    expect(env.NODE_ENV).toBe('production');
+  });
 });

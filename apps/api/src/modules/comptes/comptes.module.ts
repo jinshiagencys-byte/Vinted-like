@@ -22,6 +22,7 @@ import { VerifierTelephone } from './application/cas-usage/verifier-telephone';
 import { ConsommerEvenements } from './application/services/consommer-evenements';
 import { EXPORTS_QUEUE } from './application/services/export.constants';
 import { GererExports } from './application/services/gerer-exports';
+import { ComptesQueryService } from './application/services/comptes-query.service';
 import { ServiceSessions } from './application/services/service-sessions';
 import { ServiceSignatureExport } from './application/services/service-signature-export';
 import type { VerificateurMotDePasseCompromis } from './domain/ports';
@@ -132,6 +133,7 @@ const casUsage = [
     ServiceSignatureExport,
     GererExports,
     ConsommerEvenements,
+    ComptesQueryService,
     ExportsProcessor,
     VersionSecuriteGuard,
     { provide: UTILISATEUR_REPOSITORY, useExisting: UtilisateurPrismaRepository },
@@ -170,7 +172,9 @@ const casUsage = [
     ...repositories,
     ...casUsage,
     ConsommerEvenements,
+    ComptesQueryService,
     GererExports,
+    VersionSecuriteGuard,
     UTILISATEUR_REPOSITORY,
     PROFIL_REPOSITORY,
     ADRESSE_REPOSITORY,
