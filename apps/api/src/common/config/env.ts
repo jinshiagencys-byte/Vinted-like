@@ -11,6 +11,15 @@ export const envSchema = z.object({
   JWT_ISSUER: z.string().min(1).default('secondevie'),
   JWT_AUDIENCE: z.string().min(1).default('secondevie-api'),
   JWT_KID: z.string().min(1).default('dev-1'),
+  AUTH_CODE_PEPPER: z.string().min(32, 'AUTH_CODE_PEPPER doit contenir au moins 32 caractères'),
+  AUTH_REFRESH_PEPPER: z
+    .string()
+    .min(32, 'AUTH_REFRESH_PEPPER doit contenir au moins 32 caractères'),
+  AUTH_RESET_PEPPER: z.string().min(32, 'AUTH_RESET_PEPPER doit contenir au moins 32 caractères'),
+  EXPORT_SIGNING_SECRET: z
+    .string()
+    .min(32, 'EXPORT_SIGNING_SECRET doit contenir au moins 32 caractères'),
+  EXPORT_DIR: z.string().default('.exports'),
   CORS_ORIGINS: z.string().default('http://localhost:8081'),
   LOG_LEVEL: z.enum(logLevels).default('info'),
 });

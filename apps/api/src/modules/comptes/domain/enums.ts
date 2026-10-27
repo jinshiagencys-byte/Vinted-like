@@ -15,3 +15,6 @@ export type Plateforme = (typeof PLATEFORMES)[number];
 
 export const VISIBILITES_PROFIL = ['public', 'membres'] as const;
 export type VisibiliteProfil = (typeof VISIBILITES_PROFIL)[number];
+
+export const STATUTS_EXPORT = ['en_attente', 'pret', 'echoue', 'expire'] as const;
+export type StatutExport = (typeof STATUTS_EXPORT)[number];

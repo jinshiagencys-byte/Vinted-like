@@ -1,0 +1,789 @@
+openapi: 3.0.3
+info:
+  title: SecondeVie — M1 Comptes et identité
+  version: 1.0.0
+  description: |
+    Contrat HTTP du module M1. Toutes les routes sont préfixées par `/v1`.
+    Les erreurs suivent le format `{ code, message, details?, traceId }`.
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Authentification
+  - name: Compte
+  - name: Adresses
+  - name: Appareils
+  - name: Export
+  - name: Profils publics
+paths:
+  /v1/auth/inscription:
+    post:
+      tags: [Authentification]
+      summary: Créer un compte
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Inscription'
+      responses:
+        '201':
+          description: Compte créé, code de vérification envoyé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InscriptionReponse'
+        '400':
+          $ref: '#/components/responses/Validation'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/auth/email/verifier:
+    post:
+      tags: [Authentification]
+      summary: Vérifier l’e-mail et ouvrir une session
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationEmail'
+      responses:
+        '200':
+          description: E-mail vérifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/auth/email/renvoyer:
+    post:
+      tags: [Authentification]
+      summary: Renvoyer le code de vérification e-mail
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email, maxLength: 254 }
+      responses:
+        '202':
+          description: Réponse générique
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/auth/telephone/verifier:
+    post:
+      tags: [Authentification]
+      summary: Vérifier le téléphone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code: { type: string, pattern: '^[0-9]{6}$' }
+      responses:
+        '200':
+          description: Téléphone vérifié
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  telephoneVerifie: { type: boolean, enum: [true] }
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/auth/telephone/renvoyer:
+    post:
+      tags: [Authentification]
+      summary: Renvoyer le code SMS
+      responses:
+        '202':
+          description: Code envoyé si un téléphone est renseigné
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/auth/connexion:
+    post:
+      tags: [Authentification]
+      summary: Se connecter
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Connexion'
+      responses:
+        '200':
+          description: Session ouverte
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/auth/refresh:
+    post:
+      tags: [Authentification]
+      summary: Rafraîchir la session avec rotation
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken: { type: string, minLength: 16, maxLength: 512 }
+      responses:
+        '200':
+          description: Nouvelle session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/auth/deconnexion:
+    post:
+      tags: [Authentification]
+      summary: Révoquer l’appareil courant
+      responses:
+        '204': { description: Déconnecté }
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+  /v1/auth/mot-de-passe/reinitialiser:
+    post:
+      tags: [Authentification]
+      summary: Demander une réinitialisation de mot de passe
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email, maxLength: 254 }
+      responses:
+        '202':
+          description: Réponse générique
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/auth/mot-de-passe/reinitialiser/confirmer:
+    post:
+      tags: [Authentification]
+      summary: Confirmer une réinitialisation
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [jeton, nouveauMotDePasse]
+              properties:
+                jeton: { type: string, minLength: 16, maxLength: 256 }
+                nouveauMotDePasse: { type: string, minLength: 10, maxLength: 128 }
+      responses:
+        '204': { description: Mot de passe modifié, sessions révoquées }
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/moi:
+    get:
+      tags: [Compte]
+      summary: Consulter son compte privé
+      responses:
+        '200':
+          description: Compte et profil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Moi'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+    patch:
+      tags: [Compte]
+      summary: Mettre à jour son profil avec contrôle de version
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MiseAJourMoi'
+      responses:
+        '200':
+          description: Profil mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Moi'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+    delete:
+      tags: [Compte]
+      summary: Supprimer définitivement son compte
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [motDePasse]
+              properties:
+                motDePasse: { type: string, maxLength: 128 }
+      responses:
+        '204': { description: Compte anonymisé et sessions révoquées }
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '409':
+          $ref: '#/components/responses/Conflit'
+        '503':
+          $ref: '#/components/responses/Indisponible'
+  /v1/moi/mot-de-passe:
+    patch:
+      tags: [Compte]
+      summary: Changer son mot de passe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [motDePasseActuel, nouveauMotDePasse]
+              properties:
+                motDePasseActuel: { type: string, maxLength: 128 }
+                nouveauMotDePasse: { type: string, minLength: 10, maxLength: 128 }
+      responses:
+        '204': { description: Mot de passe changé, sessions révoquées }
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/moi/adresses:
+    get:
+      tags: [Adresses]
+      summary: Lister ses adresses actives
+      responses:
+        '200':
+          description: Adresses triées par défaut puis récence
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Adresse'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+    post:
+      tags: [Adresses]
+      summary: Ajouter une adresse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdresseCreation'
+      responses:
+        '201':
+          description: Adresse créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adresse'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+  /v1/moi/adresses/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdAdresse'
+    patch:
+      tags: [Adresses]
+      summary: Modifier une adresse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdresseModification'
+      responses:
+        '200':
+          description: Adresse modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adresse'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+        '422':
+          $ref: '#/components/responses/RegleMetier'
+    delete:
+      tags: [Adresses]
+      summary: Supprimer une adresse
+      responses:
+        '204': { description: Adresse supprimée ; un défaut est promu }
+        '404':
+          $ref: '#/components/responses/Introuvable'
+  /v1/moi/adresses/{id}/defaut:
+    parameters:
+      - $ref: '#/components/parameters/IdAdresse'
+    post:
+      tags: [Adresses]
+      summary: Définir l’adresse par défaut
+      responses:
+        '204': { description: Adresse définie par défaut }
+        '404':
+          $ref: '#/components/responses/Introuvable'
+  /v1/moi/appareils:
+    get:
+      tags: [Appareils]
+      summary: Lister ses appareils actifs
+      responses:
+        '200':
+          description: Appareils actifs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appareil'
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+  /v1/moi/appareils/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    delete:
+      tags: [Appareils]
+      summary: Révoquer un appareil
+      responses:
+        '204': { description: Appareil révoqué }
+        '404':
+          $ref: '#/components/responses/Introuvable'
+  /v1/moi/appareils/push-token:
+    put:
+      tags: [Appareils]
+      summary: Enregistrer le jeton push de l’appareil courant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deviceId, pushToken]
+              properties:
+                deviceId: { type: string, minLength: 3, maxLength: 128 }
+                pushToken: { type: string, minLength: 1, maxLength: 512 }
+      responses:
+        '204': { description: Jeton enregistré }
+        '404':
+          $ref: '#/components/responses/Introuvable'
+  /v1/moi/export:
+    post:
+      tags: [Export]
+      summary: Demander un export RGPD asynchrone
+      responses:
+        '202':
+          description: Export en file d’attente
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [exportId]
+                properties:
+                  exportId: { type: string, format: uuid }
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '403':
+          $ref: '#/components/responses/Interdit'
+        '429':
+          $ref: '#/components/responses/TropDeRequetes'
+  /v1/moi/export/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Export]
+      summary: Consulter le statut d’un export
+      responses:
+        '200':
+          description: Statut de l’export
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Export'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+  /v1/moi/export/{id}/telecharger:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+      - name: exp
+        in: query
+        required: true
+        schema: { type: integer }
+      - name: signature
+        in: query
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Export]
+      summary: Télécharger un export via URL signée
+      security: []
+      responses:
+        '200':
+          description: Archive JSON
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/NonAutorise'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+  /v1/utilisateurs/{pseudo}:
+    parameters:
+      - name: pseudo
+        in: path
+        required: true
+        schema: { type: string, minLength: 3, maxLength: 30 }
+    get:
+      tags: [Profils publics]
+      summary: Consulter un profil public
+      security: []
+      responses:
+        '200':
+          description: Profil public sans données privées
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilPublic'
+        '404':
+          $ref: '#/components/responses/Introuvable'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IdAdresse:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+  responses:
+    Validation:
+      description: Requête invalide
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    NonAutorise:
+      description: Authentification requise ou session invalide
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Interdit:
+      description: Action interdite
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Introuvable:
+      description: Ressource introuvable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Conflit:
+      description: Conflit d’état ou de version
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    RegleMetier:
+      description: Règle métier violée
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    TropDeRequetes:
+      description: Limite de débit atteinte
+      headers:
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+    Indisponible:
+      description: Dépendance indisponible
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+  schemas:
+    Erreur:
+      type: object
+      required: [code, message, traceId]
+      properties:
+        code: { type: string }
+        message: { type: string }
+        details: { type: object, additionalProperties: true }
+        traceId: { type: string }
+    AppareilDemande:
+      type: object
+      required: [deviceId, plateforme]
+      properties:
+        deviceId: { type: string, minLength: 3, maxLength: 128 }
+        plateforme: { type: string, enum: [ios, android, web] }
+        pushToken: { type: string, nullable: true, maxLength: 512 }
+    Inscription:
+      type: object
+      required: [email, pseudo, motDePasse, dateNaissance]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        telephone:
+          type: string
+          nullable: true
+          description: Facultatif à l’inscription, obligatoire avant le premier achat.
+        pseudo: { type: string, minLength: 3, maxLength: 30 }
+        motDePasse: { type: string, minLength: 10, maxLength: 128 }
+        dateNaissance: { type: string, format: date }
+        pays: { type: string, minLength: 2, maxLength: 2, default: FR }
+    InscriptionReponse:
+      type: object
+      required: [utilisateurId, email, emailVerifie, verificationEnvoyeeLe, expireLe]
+      properties:
+        utilisateurId: { type: string, format: uuid }
+        email: { type: string, format: email }
+        emailVerifie: { type: boolean, enum: [false] }
+        verificationEnvoyeeLe: { type: string, format: date-time }
+        expireLe: { type: string, format: date-time }
+    VerificationEmail:
+      type: object
+      required: [email, code, appareil]
+      properties:
+        email: { type: string, format: email }
+        code: { type: string, pattern: '^[0-9]{6}$' }
+        appareil: { $ref: '#/components/schemas/AppareilDemande' }
+    Connexion:
+      type: object
+      required: [email, motDePasse, appareil]
+      properties:
+        email: { type: string, format: email }
+        motDePasse: { type: string }
+        appareil: { $ref: '#/components/schemas/AppareilDemande' }
+    UtilisateurSession:
+      type: object
+      required:
+        [id, email, pseudo, role, emailVerifie, telephoneVerifie, kycLegerComplet, versionSecurite]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        pseudo: { type: string }
+        role: { type: string, enum: [membre, moderateur, admin] }
+        emailVerifie: { type: boolean }
+        telephoneVerifie: { type: boolean }
+        kycLegerComplet: { type: boolean }
+        versionSecurite: { type: integer }
+    Session:
+      type: object
+      required: [accessToken, refreshToken, expireDans, utilisateur]
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+        expireDans: { type: integer, example: 900 }
+        utilisateur: { $ref: '#/components/schemas/UtilisateurSession' }
+    Moi:
+      type: object
+      required: [utilisateur, profil, sanctions]
+      properties:
+        utilisateur:
+          type: object
+          required:
+            [id, email, pseudo, pays, statut, role, emailVerifie, telephoneVerifie, version]
+          properties:
+            id: { type: string, format: uuid }
+            email: { type: string, format: email }
+            telephone: { type: string, nullable: true }
+            pseudo: { type: string }
+            nomComplet: { type: string, nullable: true }
+            dateNaissance: { type: string, format: date, nullable: true }
+            pays: { type: string }
+            statut: { type: string, enum: [actif, restreint, suspendu, supprime] }
+            role: { type: string, enum: [membre, moderateur, admin] }
+            emailVerifie: { type: boolean }
+            telephoneVerifie: { type: boolean }
+            kycLegerComplet: { type: boolean }
+            noteMoyenne: { type: number }
+            nbVentes: { type: integer }
+            nbAchats: { type: integer }
+            version: { type: integer }
+            versionSecurite: { type: integer }
+            derniereConnexionLe: { type: string, format: date-time, nullable: true }
+            creeLe: { type: string, format: date-time }
+        profil:
+          type: object
+          required: [stylesPreferes, visibilite, langue]
+          properties:
+            avatarUrl: { type: string, nullable: true }
+            bio: { type: string, nullable: true }
+            tailleCm: { type: integer, nullable: true }
+            pointure: { type: integer, nullable: true }
+            stylesPreferes: { type: array, items: { type: string } }
+            visibilite: { type: string, enum: [public, membres] }
+            langue: { type: string }
+        sanctions:
+          type: array
+          items: { type: object }
+    MiseAJourMoi:
+      type: object
+      required: [version]
+      properties:
+        version: { type: integer }
+        pseudo: { type: string, minLength: 3, maxLength: 30 }
+        nomComplet: { type: string, nullable: true, maxLength: 120 }
+        telephone: { type: string, nullable: true, maxLength: 20 }
+        dateNaissance: { type: string, format: date }
+        profil:
+          type: object
+          properties:
+            avatarUrl: { type: string, nullable: true }
+            bio: { type: string, nullable: true, maxLength: 300 }
+            tailleCm: { type: integer, nullable: true, minimum: 120, maximum: 230 }
+            pointure: { type: integer, nullable: true, minimum: 15, maximum: 50 }
+            stylesPreferes:
+              type: array
+              maxItems: 5
+              items: { type: string, maxLength: 40 }
+            visibilite: { type: string, enum: [public, membres] }
+            langue: { type: string, pattern: '^[a-z]{2}$' }
+    Adresse:
+      type: object
+      required:
+        [id, utilisateurId, libelle, destinataire, ligne1, codePostal, ville, pays, telephone,
+         estDefaut, creeLe, majLe]
+      properties:
+        id: { type: string, format: uuid }
+        utilisateurId: { type: string, format: uuid }
+        libelle: { type: string }
+        destinataire: { type: string }
+        ligne1: { type: string }
+        ligne2: { type: string, nullable: true }
+        codePostal: { type: string }
+        ville: { type: string }
+        pays: { type: string }
+        telephone: { type: string }
+        estDefaut: { type: boolean }
+        supprimeeLe: { type: string, format: date-time, nullable: true }
+        creeLe: { type: string, format: date-time }
+        majLe: { type: string, format: date-time }
+    AdresseCreation:
+      type: object
+      required: [libelle, destinataire, ligne1, codePostal, ville, telephone]
+      properties:
+        libelle: { type: string, maxLength: 40 }
+        destinataire: { type: string, maxLength: 120 }
+        ligne1: { type: string, maxLength: 120 }
+        ligne2: { type: string, nullable: true, maxLength: 120 }
+        codePostal: { type: string, maxLength: 10 }
+        ville: { type: string, maxLength: 120 }
+        pays: { type: string, minLength: 2, maxLength: 2 }
+        telephone: { type: string, maxLength: 20 }
+        estDefaut: { type: boolean }
+    AdresseModification:
+      type: object
+      properties:
+        libelle: { type: string, maxLength: 40 }
+        destinataire: { type: string, maxLength: 120 }
+        ligne1: { type: string, maxLength: 120 }
+        ligne2: { type: string, nullable: true, maxLength: 120 }
+        codePostal: { type: string, maxLength: 10 }
+        ville: { type: string, maxLength: 120 }
+        pays: { type: string, minLength: 2, maxLength: 2 }
+        telephone: { type: string, maxLength: 20 }
+    Appareil:
+      type: object
+      required: [id, plateforme, deviceId, creeLe]
+      properties:
+        id: { type: string, format: uuid }
+        plateforme: { type: string, enum: [ios, android, web] }
+        deviceId: { type: string }
+        derniereActiviteLe: { type: string, format: date-time, nullable: true }
+        creeLe: { type: string, format: date-time }
+    Export:
+      type: object
+      required: [id, statut, creeLe]
+      properties:
+        id: { type: string, format: uuid }
+        statut: { type: string, enum: [en_attente, pret, echoue, expire] }
+        urlSignee: { type: string, nullable: true }
+        expireLe: { type: string, format: date-time, nullable: true }
+        creeLe: { type: string, format: date-time }
+        termineLe: { type: string, format: date-time, nullable: true }
+    ProfilPublic:
+      type: object
+      required: [pseudo, noteMoyenne, nbVentes, nbAchats, membreDepuis]
+      properties:
+        pseudo: { type: string }
+        avatarUrl: { type: string, nullable: true }
+        bio: { type: string, nullable: true }
+        noteMoyenne: { type: number }
+        nbVentes: { type: integer }
+        nbAchats: { type: integer }
+        membreDepuis: { type: string, format: date-time }
+security:
+  - bearerAuth: []

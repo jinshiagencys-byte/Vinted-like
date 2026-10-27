@@ -9,3 +9,4 @@ coverage/
 .DS_Store
 test-results/
 apps/api/prisma/dev.db
+.expo/

@@ -1,6 +1,7 @@
 import type {
   Adresse,
   Appareil,
+  ExportRgpd,
   Profil,
   ReinitialisationMotDePasse,
   Utilisateur,
@@ -24,6 +25,13 @@ export const VERIFICATION_REPOSITORY = Symbol('VERIFICATION_REPOSITORY');
 export const REINITIALISATION_REPOSITORY = Symbol('REINITIALISATION_REPOSITORY');
 export const HACHEUR_MOT_DE_PASSE = Symbol('HACHEUR_MOT_DE_PASSE');
 export const VERIFICATEUR_MOT_DE_PASSE_COMPROMIS = Symbol('VERIFICATEUR_MOT_DE_PASSE_COMPROMIS');
+export const NOTIFICATION_PORT = Symbol('NOTIFICATION_PORT');
+export const INSCRIPTION_REPOSITORY = Symbol('INSCRIPTION_REPOSITORY');
+export const EXPORT_REPOSITORY = Symbol('EXPORT_REPOSITORY');
+export const STOCKAGE_EXPORT = Symbol('STOCKAGE_EXPORT');
+export const COMMANDES_PORT = Symbol('COMMANDES_PORT');
+export const LITIGES_PORT = Symbol('LITIGES_PORT');
+export const PORTEFEUILLE_PORT = Symbol('PORTEFEUILLE_PORT');
 
 export interface CreerUtilisateur {
   email: string;
@@ -47,14 +55,47 @@ export interface MiseAJourUtilisateur {
   statut?: StatutCompte;
   versionSecurite?: number;
   derniereConnexionLe?: Date | null;
+  pseudo?: string;
+  pseudoNormalise?: string;
+  version?: number;
+}
+
+export interface DonneesAnonymisation {
+  email: string;
+  pseudo: string;
+  pseudoNormalise: string;
+  supprimeLe: Date;
+  versionSecurite: number;
+}
+
+export interface InscriptionAtomique {
+  creer(
+    donnees: CreerUtilisateur,
+    verification: { codeHash: string; expireLe: Date },
+  ): Promise<{
+    utilisateur: Utilisateur;
+    verificationId: string;
+  }>;
 }
 
 export interface UtilisateurRepository {
   creer(donnees: CreerUtilisateur): Promise<Utilisateur>;
   trouverParId(id: string): Promise<Utilisateur | null>;
   trouverParEmail(email: string): Promise<Utilisateur | null>;
+  trouverParTelephone(telephone: string): Promise<Utilisateur | null>;
   trouverParPseudoNormalise(pseudoNormalise: string): Promise<Utilisateur | null>;
   mettreAJour(id: string, donnees: MiseAJourUtilisateur): Promise<Utilisateur>;
+  mettreAJourVersionne(
+    id: string,
+    versionAttendue: number,
+    donnees: MiseAJourUtilisateur,
+  ): Promise<Utilisateur>;
+  anonymiser(id: string, donnees: DonneesAnonymisation): Promise<void>;
+  mettreAJourReputation(
+    id: string,
+    reputation: { noteMoyenne: number; nbVentes: number; nbAchats: number; version: number },
+  ): Promise<boolean>;
+  incrementerCompteurs(id: string, champs: { ventes?: number; achats?: number }): Promise<void>;
 }
 
 export interface CreerProfil {
@@ -133,13 +174,32 @@ export interface RotationRefresh {
   refreshTokenExpireLe: Date;
 }
 
+export interface OuvrirSessionAppareil {
+  utilisateurId: string;
+  plateforme: Plateforme;
+  deviceId: string;
+  refreshTokenHash: string;
+  refreshTokenExpireLe: Date;
+  pushToken?: string | null;
+}
+
 export interface AppareilRepository {
   creer(donnees: CreerAppareil): Promise<Appareil>;
   listerActifs(utilisateurId: string): Promise<Appareil[]>;
   trouverParId(utilisateurId: string, id: string): Promise<Appareil | null>;
+  trouverParIdGlobal(id: string): Promise<Appareil | null>;
+  trouverParDeviceId(utilisateurId: string, deviceId: string): Promise<Appareil | null>;
   trouverParHash(refreshTokenHash: string): Promise<Appareil | null>;
+  ouvrirSession(donnees: OuvrirSessionAppareil): Promise<Appareil>;
   enregistrerRotation(id: string, rotation: RotationRefresh): Promise<void>;
+  rotationConditionnelle(
+    id: string,
+    hashAttendu: string,
+    rotation: RotationRefresh,
+  ): Promise<boolean>;
   revoquer(utilisateurId: string, id: string, revoqueLe: Date): Promise<void>;
+  revoquerParId(id: string, revoqueLe: Date): Promise<void>;
+  revoquerTous(utilisateurId: string, revoqueLe: Date): Promise<void>;
   mettreAJourPushToken(utilisateurId: string, deviceId: string, pushToken: string): Promise<void>;
 }
 
@@ -156,6 +216,13 @@ export interface VerificationRepository {
   trouverEnAttente(utilisateurId: string, type: TypeVerification): Promise<Verification | null>;
   incrementerTentatives(id: string): Promise<Verification>;
   marquerStatut(id: string, statut: StatutVerification, date?: Date | null): Promise<Verification>;
+  invaliderEnAttente(
+    utilisateurId: string,
+    type: TypeVerification,
+    statut: StatutVerification,
+  ): Promise<number>;
+  compterDepuis(utilisateurId: string, type: TypeVerification, depuis: Date): Promise<number>;
+  purgerPourUtilisateur(utilisateurId: string, date: Date): Promise<void>;
 }
 
 export interface CreerReinitialisation {
@@ -168,6 +235,49 @@ export interface ReinitialisationRepository {
   creer(donnees: CreerReinitialisation): Promise<ReinitialisationMotDePasse>;
   trouverParJetonHash(jetonHash: string): Promise<ReinitialisationMotDePasse | null>;
   marquerUtilise(id: string, utiliseLe: Date): Promise<void>;
+  invaliderPourUtilisateur(utilisateurId: string, date: Date): Promise<void>;
+}
+
+export interface CreerExport {
+  utilisateurId: string;
+}
+
+export interface ExportRepository {
+  creer(donnees: CreerExport): Promise<ExportRgpd>;
+  trouver(utilisateurId: string, id: string): Promise<ExportRgpd | null>;
+  trouverParId(id: string): Promise<ExportRgpd | null>;
+  marquerPret(id: string, urlSignee: string, expireLe: Date, termineLe: Date): Promise<void>;
+  marquerEchoue(id: string, termineLe: Date): Promise<void>;
+  marquerExpire(id: string, expireLe: Date): Promise<void>;
+}
+
+export interface MessageNotification {
+  canal: 'email' | 'sms' | 'push';
+  destinataire: string;
+  modele: string;
+  variables: Record<string, string>;
+  utilisateurId?: string;
+}
+
+export interface NotificationPort {
+  envoyer(message: MessageNotification): Promise<void>;
+}
+
+export interface StockageExport {
+  ecrire(exportId: string, contenu: string): Promise<void>;
+  lire(exportId: string): Promise<string | null>;
+}
+
+export interface CommandesPort {
+  compterEnCours(utilisateurId: string): Promise<number>;
+}
+
+export interface LitigesPort {
+  compterOuverts(utilisateurId: string): Promise<number>;
+}
+
+export interface PortefeuillePort {
+  soldeNonNul(utilisateurId: string): Promise<boolean>;
 }
 
 export interface HacheurMotDePasse {

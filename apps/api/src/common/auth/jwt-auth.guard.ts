@@ -11,6 +11,7 @@ interface JwtPayload {
   role?: string;
   emailVerifie?: boolean;
   ver?: number;
+  sid?: string;
 }
 
 const roles: Role[] = ['membre', 'moderateur', 'admin', 'systeme'];
@@ -71,6 +72,7 @@ export class JwtAuthGuard implements CanActivate {
         role: payload.role,
         emailVerifie: payload.emailVerifie === true,
         versionSecurite: typeof payload.ver === 'number' ? payload.ver : 0,
+        ...(typeof payload.sid === 'string' ? { appareilId: payload.sid } : {}),
       };
 
       return true;

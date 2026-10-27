@@ -38,7 +38,7 @@ pnpm build
 
 ```text
 apps/api/                 API NestJS
-packages/contracts/       contrats partagés (OpenAPI/client à venir)
+packages/contracts/       contrats partagés et client typé M1
 packages/config/          configuration TypeScript/Prettier partagée
 infra/docker/             PostgreSQL, Redis, MinIO
 docs/                     architecture, conception, ADR
@@ -54,17 +54,26 @@ docs/                     architecture, conception, ADR
 - [x] guards `JwtAuthGuard`, `RolesGuard`, `ProprietaireGuard`
 - [x] harnais Testcontainers (PostgreSQL, Redis) — validé en CI
 - [ ] alerte dead-letter outbox (les événements à 5 échecs restent en attente)
-- [ ] client S3/MinIO (utile à l’étape 3 de M1)
-- [ ] OpenAPI et client typé (étape 2 de M1)
+- [ ] client S3/MinIO (nécessaire aux photos de M2)
+- [x] OpenAPI et client typé M1
 
-## État M1 — étape 1
+## État M1 — comptes et identité
 
-- [x] schéma Prisma : comptes, profils, adresses, appareils, vérifications, réinitialisation
-- [x] migration PostgreSQL 16 avec index partiels, `CHECK` et FK `RESTRICT`
-- [x] objets-valeurs, politiques, repositories Prisma et mappers
-- [x] Argon2id, vérification HIBP fail-open et `EmailVerifieGuard`
-- [x] 68 tests unitaires et 16 tests d’intégration, validés en CI
-- [ ] routes et cas d’usage d’inscription/session (étape 2)
+- [x] étape 1 : schéma Prisma, migration PostgreSQL 16, objets-valeurs, politiques,
+      repositories, Argon2id, HIBP fail-open, `EmailVerifieGuard` (validée par la CI)
+- [x] étape 2 : inscription, vérification e-mail/téléphone, connexion, refresh rotatif,
+      déconnexion, rate limiting Redis, OpenAPI et client typé
+- [x] étape 3 : profil, adresses, appareils, mot de passe, export RGPD asynchrone,
+      suppression/anonymisation
+- [x] étape 4 : parcours mobile Expo Router, jetons dans SecureStore, états réseau
+- [ ] étape 5 : exécution de la suite Testcontainers en CI, recette manuelle iOS/Android,
+      signature du porteur
+- [x] 80 tests unitaires, `lint`, `typecheck`, `build` locaux ; suite HTTP d’intégration
+      ajoutée (exécution CI)
+- [ ] fournisseur e-mail/SMS réel, intégration M5/M7/M9 et build natif mobile
+
+Le runbook d’installation, de migration et de recette est dans
+[`docs/runbooks/comptes.md`](docs/runbooks/comptes.md).
 
 ## Limites de l’environnement de développement
 

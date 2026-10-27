@@ -1,6 +1,7 @@
 import type {
   Adresse as AdressePrisma,
   Appareil as AppareilPrisma,
+  ExportRgpd as ExportPrisma,
   Profil as ProfilPrisma,
   ReinitialisationMotDePasse as ReinitialisationPrisma,
   Utilisateur as UtilisateurPrisma,
@@ -9,6 +10,7 @@ import type {
 import type {
   Adresse,
   Appareil,
+  ExportRgpd,
   Profil,
   ReinitialisationMotDePasse,
   Utilisateur,
@@ -118,5 +120,17 @@ export function versReinitialisation(row: ReinitialisationPrisma): Reinitialisat
     expireLe: row.expireLe,
     utiliseLe: row.utiliseLe,
     creeLe: row.creeLe,
+  };
+}
+
+export function versExport(row: ExportPrisma): ExportRgpd {
+  return {
+    id: row.id,
+    utilisateurId: row.utilisateurId,
+    statut: row.statut,
+    urlSignee: row.urlSignee,
+    expireLe: row.expireLe,
+    creeLe: row.creeLe,
+    termineLe: row.termineLe,
   };
 }

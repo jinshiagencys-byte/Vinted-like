@@ -34,4 +34,11 @@ export class ReinitialisationPrismaRepository implements ReinitialisationReposit
       data: { utiliseLe },
     });
   }
+
+  async invaliderPourUtilisateur(utilisateurId: string, date: Date): Promise<void> {
+    await this.prisma.reinitialisationMotDePasse.updateMany({
+      where: { utilisateurId, utiliseLe: null },
+      data: { utiliseLe: date },
+    });
+  }
 }

@@ -24,6 +24,7 @@ export class EmailVerifieGuard implements CanActivate {
       throw new ForbiddenException({
         code: 'email_non_verifie',
         message: 'Vérifiez votre e-mail avant de continuer.',
+        details: { raison: 'email_non_verifie' },
       });
     }
 

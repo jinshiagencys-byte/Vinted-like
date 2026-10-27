@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "SecondeVie",
+    "slug": "secondevie",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "secondevie",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.secondevie.app"
+    },
+    "android": {
+      "package": "com.secondevie.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

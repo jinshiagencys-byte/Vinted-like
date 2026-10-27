@@ -2,6 +2,7 @@ import type {
   Plateforme,
   RoleCompte,
   StatutCompte,
+  StatutExport,
   StatutVerification,
   TypeVerification,
   VisibiliteProfil,
@@ -99,6 +100,16 @@ export interface ReinitialisationMotDePasse {
   expireLe: Date;
   utiliseLe: Date | null;
   creeLe: Date;
+}
+
+export interface ExportRgpd {
+  id: string;
+  utilisateurId: string;
+  statut: StatutExport;
+  urlSignee: string | null;
+  expireLe: Date | null;
+  creeLe: Date;
+  termineLe: Date | null;
 }
 
 export function emailVerifie(utilisateur: Utilisateur): boolean {

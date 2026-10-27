@@ -8,8 +8,8 @@ export class HacheurMotDePasseArgon2 implements HacheurMotDePasse {
   async hacher(motDePasse: MotDePasse): Promise<string> {
     return argon2.hash(motDePasse.reveler(), {
       type: argon2.argon2id,
-      memoryCost: 19_456,
-      timeCost: 2,
+      memoryCost: 65_536,
+      timeCost: 3,
       parallelism: 1,
     });
   }

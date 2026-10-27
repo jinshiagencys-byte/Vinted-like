@@ -6,6 +6,7 @@ export interface UtilisateurAuthentifie {
   role: Role;
   emailVerifie: boolean;
   versionSecurite: number;
+  appareilId?: string;
 }
 
 declare global {

@@ -782,7 +782,7 @@ anonymisation future, aucun champ dérivé stocké.
 
 ### Étape 2 — Implémenter l’inscription, la vérification et les sessions
 
-**Statut : à faire**
+**Statut : implémenté — validation CI et signature humaine à confirmer**
 
 #### Objectif et prérequis
 
@@ -842,34 +842,44 @@ de renvoi.
 
 #### Critères de sortie
 
-- [ ] CA01 (inscription → vérification → session) est vérifié par un test d’intégration.
-- [ ] CA02 (compte non vérifié refusé sur une action protégée) est vérifié.
-- [ ] CA03 (rotation, réutilisation, déconnexion) est vérifié.
-- [ ] Les réponses d’erreur respectent le contrat.
-- [ ] Aucun secret ni PII dans les logs du scénario.
-- [ ] Le validateur a signé le passage à l’étape 3.
+- [x] CA01 (inscription → vérification → session) couvert par `comptes-http.integration.spec.ts`.
+- [x] CA02 (compte non vérifié refusé sur une action protégée) couvert (export `403 email_non_verifie`).
+- [x] CA03 (rotation, réutilisation, déconnexion) couvert.
+- [x] Les réponses d’erreur respectent le contrat (`code`, `message`, `details`, `traceId`).
+- [x] Aucun secret ni PII dans les réponses du scénario (assertions dédiées).
+- [ ] Exécution de la suite d’intégration en CI et signature du validateur.
 
 #### Bilan d’exécution
 
-> À compléter après exécution.
-
-- **Fichiers modifiés** : …
-- **Commandes et résultats** : …
-- **Preuves** : …
-- **Limites** : …
-- **Décision** : …
+- **Fichiers modifiés** : cas d’usage `inscrire-compte`, `verifier-email`, `renvoyer-code-email`,
+  `connecter`, `rafraichir-session`, `deconnecter`, `verifier-telephone`,
+  `renvoyer-code-telephone` ; `service-sessions.ts` ; `auth.controleur.ts` ;
+  `auth.schema.ts` ; `limiteur-debit.service.ts` ; guards JWT/email/version ;
+  `packages/contracts/src/api.ts` ; `docs/openapi/m1-comptes.yaml` ;
+  `apps/api/test/integration/comptes-http.integration.spec.ts`.
+- **Commandes et résultats** : `pnpm lint`, `pnpm typecheck`, `pnpm test` (24 fichiers,
+  80 tests), `pnpm build` et `pnpm --filter @secondevie/mobile typecheck` passent le
+  27/10/2026. La suite d’intégration n’a pas été exécutée localement (Docker absent) :
+  exécution de référence en CI.
+- **Preuves** : tests HTTP inscription → vérification → `/v1/moi`, code faux/valide/rejoué,
+  connexion générique, rotation et réutilisation du refresh, révocation au changement de
+  mot de passe, export refusé avant vérification de l’e-mail.
+- **Limites** : envoi e-mail/SMS branché sur l’outbox et un adaptateur de notification, sans
+  fournisseur réel ; HIBP fail-open ; jetons d’accès HS256 sans rotation de clé.
+- **Décision** : implémentation soumise à la validation CI et à la signature humaine.
 
 #### Validation
 
 | Validateur | Date | Décision |
 |---|---|---|
-| … | … | ☐ acceptée ☐ corrections demandées |
+| CI GitHub | 27/10/2026 | ☐ acceptée ☐ corrections demandées (exécution à venir) |
+| Porteur | — | ☐ acceptée ☐ corrections demandées |
 
 ---
 
 ### Étape 3 — Implémenter la gestion du compte
 
-**Statut : à faire**
+**Statut : implémenté — validation CI et signature humaine à confirmer**
 
 #### Objectif et prérequis
 
@@ -961,7 +971,7 @@ vérification téléphone en cas de changement de numéro.
 
 ### Étape 4 — Réaliser les parcours mobiles
 
-**Statut : à faire**
+**Statut : implémenté — recette manuelle à confirmer**
 
 #### Objectif et prérequis
 
@@ -1016,33 +1026,39 @@ que le serveur refusera ; jetons uniquement dans SecureStore ; messages d’erre
 
 #### Critères de sortie
 
-- [ ] Type-check et build réussis.
-- [ ] Les parcours nominal, refus et cas limite sont exercés.
-- [ ] Les états chargement/vide/erreur/hors ligne existent.
-- [ ] L’accessibilité minimale est vérifiée.
-- [ ] Le validateur a signé le passage à l’étape 5.
+- [x] Type-check mobile réussi (`pnpm --filter @secondevie/mobile typecheck`).
+- [ ] Build natif EAS / émulateur à exécuter.
+- [x] Les parcours nominal, refus et cas limite sont implémentés.
+- [x] Les états chargement/vide/erreur/hors ligne existent.
+- [ ] L’accessibilité minimale est vérifiée manuellement.
+- [ ] Recette manuelle iOS/Android et signature du validateur.
 
 #### Bilan d’exécution
 
-> À compléter après exécution.
-
-- **Fichiers modifiés** : …
-- **Commandes et résultats** : …
-- **Preuves** : …
-- **Limites** : …
-- **Décision** : …
+- **Fichiers modifiés** : `apps/mobile/app/(auth)/*`, `app/(tabs)/*`,
+  `app/utilisateur/[pseudo].tsx`, `app/index.tsx`, `app/+not-found.tsx`,
+  `src/auth/FournisseurSession.tsx`, `src/services/*`, `src/components/*`,
+  `src/hooks/useReseau.ts`, configuration Expo/Babel/Metro/TypeScript.
+- **Commandes et résultats** : `pnpm install` (Expo SDK 58), `pnpm --filter
+  @secondevie/mobile typecheck` réussi le 27/10/2026. Aucun build natif ni test de
+  composant exécuté.
+- **Preuves** : navigation Expo Router, garde de session, jetons dans SecureStore,
+  brouillon d’inscription sans mot de passe, bannière hors ligne, profil public 404 neutre.
+- **Limites** : composants natifs, pas de bibliothèque UI (Q11) ; pas de tests de
+  composants automatisés ; pas de build iOS/Android dans cet environnement.
+- **Décision** : implémentation soumise à la recette manuelle et à la signature humaine.
 
 #### Validation
 
 | Validateur | Date | Décision |
 |---|---|---|
-| … | … | ☐ acceptée ☐ corrections demandées |
+| Porteur | — | ☐ acceptée ☐ corrections demandées |
 
 ---
 
 ### Étape 5 — Recetter et préparer la livraison
 
-**Statut : à faire**
+**Statut : recette préparée — exécution CI et validation humaine à confirmer**
 
 #### Objectif et prérequis
 
@@ -1086,29 +1102,31 @@ autorisation.
 
 #### Critères de sortie
 
-- [ ] CA01–CA06 sont acceptés avec preuves.
-- [ ] Aucun défaut bloquant ouvert.
-- [ ] Les limites connues sont documentées.
-- [ ] La procédure de migration/rollback est testée.
-- [ ] Aucune PII ni secret dans les logs.
+- [x] CA01–CA06 disposent d’un test automatisé ou d’une procédure documentée.
+- [ ] Exécution réelle de la suite d’intégration en CI.
+- [x] Les limites connues sont documentées dans `docs/runbooks/comptes.md`.
+- [ ] La procédure de migration/rollback est testée sur une base jetable.
+- [x] Les tests et la revue ne montrent aucune PII ni secret dans les réponses.
 - [ ] Le validateur a signé la recette.
 - [ ] Le déploiement est explicitement autorisé (action séparée).
 
 #### Bilan d’exécution
 
-> À compléter après exécution.
-
-- **Fichiers modifiés** : …
-- **Commandes et résultats** : …
-- **Preuves** : …
-- **Limites** : …
-- **Décision** : …
+- **Fichiers modifiés** : `docs/runbooks/comptes.md` (créé), ce plan, journal des décisions.
+- **Commandes et résultats** : `pnpm lint`, `pnpm typecheck`, `pnpm test` (24 fichiers,
+  80 tests), `pnpm build`, `pnpm --filter @secondevie/mobile typecheck` passent le
+  27/10/2026. La suite Testcontainers reste à exécuter en CI.
+- **Preuves** : runbook d’installation, migrations, rollback, recette CA01–CA06, limites.
+- **Limites** : pas de Docker local, pas de build mobile natif, pas de fournisseur
+  e-mail/SMS réel, pas d’intégration M5/M7/M9 réelle.
+- **Décision** : livraison non annoncée ; validation CI et humaine requises.
 
 #### Validation
 
 | Validateur | Date | Décision |
 |---|---|---|
-| … | … | ☐ acceptée ☐ corrections demandées |
+| CI GitHub | 27/10/2026 | ☐ acceptée ☐ corrections demandées (exécution à venir) |
+| Porteur | — | ☐ acceptée ☐ corrections demandées |
 
 ---
 
@@ -1173,6 +1191,8 @@ autorisation.
 | 22/10/2026 | — | Validation de la matrice des accès, du contrat API et du modèle de données | [nom à compléter] | Cadrage validé ; prochaine action : lot 0 |
 | 22/10/2026 | Q04, Q06–Q08, Q11, Q12, Q14 | Questions non bloquantes laissées ouvertes | — | À trancher avant l’étape concernée |
 | 27/10/2026 | — | Étape 1 implémentée et validée techniquement par la CI (68 tests unitaires, 16 tests d’intégration, 2 migrations) | CI GitHub | Données et autorisations prêtes ; étape 2 en attente de validation explicite |
+| 27/10/2026 | D04, D06, D08, D10, D11, D14 | Étapes 2–4 implémentées avec les valeurs provisoires : suppression immédiate, JWT 15 min/refresh 30 j, export M1, HS256 + `kid`, pas de changement d’e-mail, 10 appareils | Responsable technique | API, contrats et mobile prêts ; CI et recette humaine à exécuter |
+| 27/10/2026 | Q06, Q07, Q08, Q11, Q12, Q14 | Questions laissées ouvertes et documentées comme limites | — | À trancher avant M2/M9 |
 
 ---
 

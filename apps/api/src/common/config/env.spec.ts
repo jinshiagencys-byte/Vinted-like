@@ -10,6 +10,10 @@ const base = {
   JWT_ISSUER: 'secondevie',
   JWT_AUDIENCE: 'secondevie-api',
   JWT_KID: 'test-1',
+  AUTH_CODE_PEPPER: 'code-pepper-de-test-32-caracteres-minimum',
+  AUTH_REFRESH_PEPPER: 'refresh-pepper-de-test-32-caracteres-minimum',
+  AUTH_RESET_PEPPER: 'reset-pepper-de-test-32-caracteres-minimum',
+  EXPORT_SIGNING_SECRET: 'export-secret-de-test-32-caracteres-minimum',
   CORS_ORIGINS: 'http://localhost:8081',
   LOG_LEVEL: 'silent',
 };

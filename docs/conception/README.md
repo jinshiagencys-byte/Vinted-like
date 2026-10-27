@@ -22,9 +22,15 @@ règles métier, événements, tests et lots d'implémentation.
 > **Plan d’exécution de M1** : le document opérationnel au format du guide étudiant est
 > [`docs/modules/comptes-identite.md`](../modules/comptes-identite.md). Son cadrage a été
 > validé le 22/10/2026 ; le **lot 0** (socle) est validé depuis le 22/10/2026 par la CI
-> GitHub. L’**étape 1** (données et autorisations) est implémentée et validée techniquement
-> par la CI le 27/10/2026 ; l’étape 2 attend la validation explicite du porteur. Les
-> documents de ce dossier restent des annexes de conception détaillée.
+> GitHub. Les **étapes 1 à 4** sont implémentées au 27/10/2026 ; l’étape 5 (recette CI et
+> signature humaine) reste à exécuter. Le runbook est dans
+> [`docs/runbooks/comptes.md`](../runbooks/comptes.md). Les documents de ce dossier restent
+> des annexes de conception détaillée.
+>
+> **M2** : la conception détaillée est dans
+> [`M2-annonces-catalogue.md`](./M2-annonces-catalogue.md). Le plan opérationnel et les
+> décisions d’exécution sont consignés dans
+> [`docs/modules/M2-annonces-catalogue.md`](../modules/M2-annonces-catalogue.md).
 
 ## Ordre de conception proposé
 

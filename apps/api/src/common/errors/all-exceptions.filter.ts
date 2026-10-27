@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import { ZodError } from 'zod';
 import { logger } from '../observability/logger';
 import { DomainError } from './domain-error';
+import { LimiteDebitException } from './limite-debit.exception';
 
 interface ErrorBody {
   code: string;
@@ -55,6 +56,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status = exception.getStatus();
       code = codeParStatut[status] ?? 'erreur_interne';
       const body = exception.getResponse();
+
+      if (exception instanceof LimiteDebitException) {
+        response.setHeader('Retry-After', String(exception.retryAfterSecondes));
+      }
 
       if (typeof body === 'string') {
         message = body;

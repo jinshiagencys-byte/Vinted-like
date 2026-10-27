@@ -50,6 +50,11 @@ jobs:
     env:
       DATABASE_URL: postgresql://secondevie:secondevie@localhost:5432/secondevie?schema=public
       JWT_SECRET: secret-de-ci-32-caracteres-minimum
+      AUTH_CODE_PEPPER: code-pepper-de-ci-32-caracteres-minimum
+      AUTH_REFRESH_PEPPER: refresh-pepper-de-ci-32-caracteres-minimum
+      AUTH_RESET_PEPPER: reset-pepper-de-ci-32-caracteres-minimum
+      EXPORT_SIGNING_SECRET: export-secret-de-ci-32-caracteres-minimum
+      EXPORT_DIR: .exports-ci
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

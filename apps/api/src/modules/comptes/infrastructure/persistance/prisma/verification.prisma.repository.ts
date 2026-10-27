@@ -59,4 +59,34 @@ export class VerificationPrismaRepository implements VerificationRepository {
 
     return versVerification(row);
   }
+
+  async invaliderEnAttente(
+    utilisateurId: string,
+    type: TypeVerification,
+    statut: StatutVerification,
+  ): Promise<number> {
+    const resultat = await this.prisma.verification.updateMany({
+      where: { utilisateurId, type, statut: 'en_attente' },
+      data: { statut },
+    });
+
+    return resultat.count;
+  }
+
+  async compterDepuis(
+    utilisateurId: string,
+    type: TypeVerification,
+    depuis: Date,
+  ): Promise<number> {
+    return this.prisma.verification.count({
+      where: { utilisateurId, type, creeLe: { gte: depuis } },
+    });
+  }
+
+  async purgerPourUtilisateur(utilisateurId: string, date: Date): Promise<void> {
+    await this.prisma.verification.updateMany({
+      where: { utilisateurId, statut: 'en_attente' },
+      data: { statut: 'expire', codeHash: null, expireLe: date },
+    });
+  }
 }

@@ -44,6 +44,13 @@ enum VisibiliteProfil {
   membres
 }
 
+enum StatutExport {
+  en_attente
+  pret
+  echoue
+  expire
+}
+
 /// Événements de domaine écrits dans la transaction métier (outbox).
 model OutboxEvenement {
   id             String    @id @db.Uuid
@@ -102,6 +109,7 @@ model Utilisateur {
   appareils         Appareil[]
   verifications     Verification[]
   reinitialisations ReinitialisationMotDePasse[]
+  exports           ExportRgpd[]
 
   @@index([statut])
   @@index([creeLe])
@@ -200,4 +208,19 @@ model ReinitialisationMotDePasse {
 
   @@index([utilisateurId])
   @@map("reinitialisations_mot_de_passe")
+}
+
+model ExportRgpd {
+  id            String       @id @default(uuid()) @db.Uuid
+  utilisateurId String       @map("utilisateur_id") @db.Uuid
+  statut        StatutExport @default(en_attente)
+  urlSignee     String?      @map("url_signee") @db.Text
+  expireLe      DateTime?    @map("expire_le") @db.Timestamptz(3)
+  creeLe        DateTime     @default(now()) @map("cree_le") @db.Timestamptz(3)
+  termineLe     DateTime?    @map("termine_le") @db.Timestamptz(3)
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Restrict)
+
+  @@index([utilisateurId, creeLe])
+  @@map("exports_rgpd")
 }
