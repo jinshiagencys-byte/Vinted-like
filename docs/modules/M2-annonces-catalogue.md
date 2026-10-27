@@ -150,7 +150,7 @@ pnpm format
 pnpm lint
 pnpm typecheck
 pnpm --filter @secondevie/mobile typecheck
-pnpm test          # 36 fichiers, 138 tests
+pnpm test          # 37 fichiers, 141 tests
 pnpm build
 ```
 
@@ -164,6 +164,10 @@ Les deux configurations Vitest chargent `unplugin-swc` avec `legacyDecorator` et
 décorateurs, ce qui empêchait NestJS de résoudre les dépendances injectées par type
 (`OutboxPublisher`, cas d’usage). Toute nouvelle configuration Vitest qui instancie un
 module NestJS doit conserver ce réglage.
+
+Un test garde-fou (`controleurs/__tests__/codes-http.spec.ts`) vérifie que les codes HTTP
+déclarés dans le contrat OpenAPI correspondent à ceux des contrôleurs : NestJS répond
+`201` par défaut à un `POST`, donc un `@HttpCode` oublié dérive silencieusement.
 
 ## 8. Limites connues à documenter
 

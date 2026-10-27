@@ -69,6 +69,7 @@ export class AnnoncesControleur {
   }
 
   @Post(':id/publier')
+  @HttpCode(200)
   @UseGuards(VersionSecuriteGuard)
   publierAnnonce(@Param('id') id: string, @Body() body: unknown, @Req() request: Request) {
     const commande = publierAnnonceSchema.parse(body);
