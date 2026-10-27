@@ -686,7 +686,7 @@ d’intégration aux étapes 1–3.
 
 ### Étape 1 — Construire les données et les autorisations
 
-**Statut : à faire**
+**Statut : terminé — validé techniquement par la CI le 27/10/2026**
 
 #### Objectif et prérequis
 
@@ -745,27 +745,38 @@ anonymisation future, aucun champ dérivé stocké.
 
 #### Critères de sortie
 
-- [ ] La migration passe sur PostgreSQL 16 de test et le rollback fonctionne.
-- [ ] Les index et contraintes existent réellement (vérification SQL).
-- [ ] Les tests de données et d’autorisations sont verts.
-- [ ] Aucun secret n’est présent dans le dépôt.
+- [x] La migration passe sur PostgreSQL 16 de test et le rollback fonctionne.
+- [x] Les index et contraintes existent réellement (vérification SQL).
+- [x] Les tests de données et d’autorisations sont verts.
+- [x] Aucun secret n’est présent dans le dépôt.
 - [ ] Le validateur a signé le passage à l’étape 2.
 
 #### Bilan d’exécution
 
-> À compléter après exécution.
-
-- **Fichiers modifiés** : …
-- **Commandes et résultats** : …
-- **Preuves** : …
-- **Limites** : …
-- **Décision** : …
+- **Fichiers modifiés** : schéma Prisma et migration `20261022140000_m1_comptes` ;
+  rollback dans `infra/migrations/down/` ; domaine, politiques, repositories et mappers
+  sous `apps/api/src/modules/comptes/…` ; `EmailVerifieGuard` et module d’authentification ;
+  factories et tests sous `apps/api/test/…` ; dépendance `argon2` et configuration Vitest
+  d’intégration.
+- **Commandes et résultats** : localement `pnpm format:check`, `pnpm lint`,
+  `pnpm typecheck`, `pnpm test` (**68 tests unitaires**) et `pnpm build` sont verts. En CI,
+  `prisma migrate deploy` applique les **2 migrations** sur PostgreSQL 16, puis les tests
+  Testcontainers passent (**2 fichiers, 16 tests d’intégration**).
+- **Preuves** : run de validation
+  [`40472083821`](https://github.com/jinshiagencys-byte/Vinted-like/actions/runs/40472083821)
+  — jobs `qualite` et `integration` verts ; aucun secret détecté dans les fichiers suivis.
+- **Limites** : Docker n’est pas installé localement, donc les tests Testcontainers sont
+  exécutés en CI ; le nom du validateur reste à compléter ; les routes et écrans ne sont pas
+  encore implémentés (étape 2) ; le PAT utilisé pour le push doit être révoqué.
+- **Décision** : étape 1 acceptée techniquement. L’étape 2 ne démarre qu’après validation
+  explicite du porteur.
 
 #### Validation
 
 | Validateur | Date | Décision |
 |---|---|---|
-| … | … | ☐ acceptée ☐ corrections demandées |
+| CI GitHub (qualité + intégration) | 27/10/2026 | ☑ acceptée techniquement ☐ corrections demandées |
+| [nom à compléter] | 27/10/2026 | ☐ acceptée ☐ corrections demandées |
 
 ---
 
@@ -1161,6 +1172,7 @@ autorisation.
 | 22/10/2026 | D14 / Q13 | Téléphone unique lorsqu’il est renseigné | [nom à compléter] | R01/R13, données |
 | 22/10/2026 | — | Validation de la matrice des accès, du contrat API et du modèle de données | [nom à compléter] | Cadrage validé ; prochaine action : lot 0 |
 | 22/10/2026 | Q04, Q06–Q08, Q11, Q12, Q14 | Questions non bloquantes laissées ouvertes | — | À trancher avant l’étape concernée |
+| 27/10/2026 | — | Étape 1 implémentée et validée techniquement par la CI (68 tests unitaires, 16 tests d’intégration, 2 migrations) | CI GitHub | Données et autorisations prêtes ; étape 2 en attente de validation explicite |
 
 ---
 

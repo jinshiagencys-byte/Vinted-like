@@ -57,13 +57,22 @@ docs/                     architecture, conception, ADR
 - [ ] client S3/MinIO (utile à l’étape 3 de M1)
 - [ ] OpenAPI et client typé (étape 2 de M1)
 
+## État M1 — étape 1
+
+- [x] schéma Prisma : comptes, profils, adresses, appareils, vérifications, réinitialisation
+- [x] migration PostgreSQL 16 avec index partiels, `CHECK` et FK `RESTRICT`
+- [x] objets-valeurs, politiques, repositories Prisma et mappers
+- [x] Argon2id, vérification HIBP fail-open et `EmailVerifieGuard`
+- [x] 68 tests unitaires et 16 tests d’intégration, validés en CI
+- [ ] routes et cas d’usage d’inscription/session (étape 2)
+
 ## Limites de l’environnement de développement
 
 - Node 24 est installé localement ; la cible reste Node 22, également utilisée en CI.
 - Docker n’est pas installé sur cette machine : les tests unitaires et le build passent
   localement, et la CI GitHub exécute la migration PostgreSQL 16 ainsi que les tests
   Testcontainers.
-- PostgreSQL 16 et Redis 7 restent nécessaires pour le développement local de l’étape 1.
+- PostgreSQL 16 et Redis 7 restent nécessaires pour le développement local des étapes suivantes.
 
 Le détail des décisions et le plan M1 se trouvent dans
 [`docs/modules/comptes-identite.md`](docs/modules/comptes-identite.md).
