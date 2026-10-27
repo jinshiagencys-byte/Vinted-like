@@ -49,3 +49,6 @@
 - Les jobs de purge (brouillons 90 jours, photos en attente 24 h) et la réconciliation des
   compteurs restent à planifier avec M9.
 - Aucune interface mobile M2 n’est incluse dans ce lot ; les contrats sont prêts.
+- Les configurations Vitest passent par `unplugin-swc` avec métadonnées de décorateurs :
+  le transpileur par défaut de Vitest n’en émet pas et l’injection NestJS par type échoue
+  dans les tests qui instancient `AppModule`.

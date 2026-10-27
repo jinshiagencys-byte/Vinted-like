@@ -252,6 +252,9 @@ RUN_INTEGRATION_TESTS=true pnpm test:integration   # Docker requis
 La suite `apps/api/test/integration/annonces-http.integration.spec.ts` couvre le parcours
 HTTP complet. Sans Docker local, la référence reste le job CI `integration`, qui applique
 toutes les migrations sur PostgreSQL 16 puis lance les conteneurs de test.
+Les configurations Vitest utilisent `unplugin-swc` (métadonnées de décorateurs) ; si la
+suite échoue avec « Nest can't resolve dependencies … (?) », vérifier que le plugin est
+toujours actif.
 
 ## 10. Limites connues
 

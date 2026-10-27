@@ -159,6 +159,12 @@ la modification, le conflit de version, l’IDOR, la publication, l’archivage,
 les référentiels et la pagination. Elle nécessite Docker et s’exécute via
 `pnpm test:integration` ou le job CI `integration`.
 
+Les deux configurations Vitest chargent `unplugin-swc` avec `legacyDecorator` et
+`decoratorMetadata` : la transpilation esbuild par défaut n’émet pas les métadonnées de
+décorateurs, ce qui empêchait NestJS de résoudre les dépendances injectées par type
+(`OutboxPublisher`, cas d’usage). Toute nouvelle configuration Vitest qui instancie un
+module NestJS doit conserver ce réglage.
+
 ## 8. Limites connues à documenter
 
 - Pas de back-office M9 : référentiels en lecture seule, mots interdits versionnés.
