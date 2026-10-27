@@ -87,7 +87,7 @@ Le runbook d’installation, de migration et de recette est dans
 - [x] L5 : favoris idempotents, cache Redis des référentiels avec ETag/304
 - [x] L6 : consommateurs commande/modération/compte/vues, purge RGPD des favoris
 - [x] 37 fichiers et 141 tests unitaires, `lint`, `typecheck`, `build` locaux
-- [ ] suite HTTP Testcontainers exécutée en CI (Docker absent localement)
+- [x] suite HTTP Testcontainers exécutée en CI (Docker absent localement)
 - [ ] écrans mobiles M2
 - [ ] jobs planifiés de purge et de réconciliation (avec M9)
 

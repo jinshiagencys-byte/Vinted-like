@@ -256,6 +256,9 @@ Les configurations Vitest utilisent `unplugin-swc` (métadonnées de décorateur
 suite échoue avec « Nest can't resolve dependencies … (?) », vérifier que le plugin est
 toujours actif.
 
+Référence verte du 27/10/2026 (commit `1720cf5`) : run CI `40505545822`, jobs `qualite` et
+`integration` réussis, 32 tests d’intégration passés.
+
 ## 10. Limites connues
 
 - Aucun écran mobile M2 : l’API et les contrats sont prêts.

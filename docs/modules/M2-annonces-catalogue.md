@@ -159,6 +159,10 @@ la modification, le conflit de version, l’IDOR, la publication, l’archivage,
 les référentiels et la pagination. Elle nécessite Docker et s’exécute via
 `pnpm test:integration` ou le job CI `integration`.
 
+Exécution CI du 27/10/2026 (commit `1720cf5`, run `40505545822`) : jobs `qualite` et
+`integration` verts, 4 fichiers d’intégration et 32 tests passés sur PostgreSQL 16
+(Testcontainers), dont les 9 tests HTTP M1 et les 7 tests HTTP M2.
+
 Les deux configurations Vitest chargent `unplugin-swc` avec `legacyDecorator` et
 `decoratorMetadata` : la transpilation esbuild par défaut n’émet pas les métadonnées de
 décorateurs, ce qui empêchait NestJS de résoudre les dépendances injectées par type
@@ -207,3 +211,5 @@ déclarés dans le contrat OpenAPI correspondent à ceux des contrôleurs : Nest
 | 28/10/2026 | Complétude obligatoire après édition d’une annonce en ligne | Responsable technique | Édition |
 | 28/10/2026 | Contrôles pHash et réindexation après ajout de photo publiée | Responsable technique | M2-Q8 |
 | 28/10/2026 | Rejeu idempotent du worker photo | Responsable technique | Exploitation |
+| 28/10/2026 | Métadonnées de décorateurs SWC dans Vitest, code HTTP de publication aligné | Responsable technique | Tests HTTP |
+| 28/10/2026 | CI verte `qualite` + `integration` (run 40505545822) | Responsable technique | Recette |
